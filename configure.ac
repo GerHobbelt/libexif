@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([EXIF library],[0.6.14],[libexif-devel@lists.sourceforge.net],[libexif])
+AC_INIT([EXIF library], [0.6.15], [libexif-devel@lists.sourceforge.net], [libexif])
 AC_CONFIG_SRCDIR([libexif/exif-data.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([auto-m4])
@@ -49,9 +49,10 @@ dnl ---------------------------------------------------------------------------
 dnl C:A:R
 dnl 12:0:1   0.6.13
 dnl 13:1:0   added EXIF_DATA_OPTION_DONT_CHANGE_MAKER_NOTE (for 0.6.14)
-LIBEXIF_AGE=1
+dnl 14:2:0   added XP_ WinXP tags (for 0.6.15)
+LIBEXIF_AGE=2
 LIBEXIF_REVISION=0
-LIBEXIF_CURRENT=13
+LIBEXIF_CURRENT=14
 AC_SUBST([LIBEXIF_AGE])
 AC_SUBST([LIBEXIF_REVISION])
 AC_SUBST([LIBEXIF_CURRENT])
@@ -122,13 +123,38 @@ AC_SUBST([MATHLIBS])
 GP_CHECK_DOC_DIR
 GP_CHECK_DOXYGEN
 
+# Whether to enable the internal docs build.
+#
+# This takes quite some time due to the generation of lots of call
+# graphs, so it is disabled by default.
+set_enable_internal_docs=no
+AC_ARG_ENABLE([internal-docs], [dnl
+AS_HELP_STRING([--enable-internal-docs], 
+[Build internal code docs if doxygen available])], [dnl
+dnl If either --enable-foo nor --disable-foo were given, execute this.
+  if   test "x$enableval" = xno \
+    || test "x$enableval" = xoff \
+    || test "x$enableval" = xfalse; 
+  then
+    set_enable_internal_docs=no
+  elif test "x$enableval" = xyes \
+    || test "x$enableval" = xon \
+    || test "x$enableval" = xtrue
+  then
+    set_enable_internal_docs=yes
+  fi
+])
+AC_MSG_CHECKING([whether to create internal code docs])
+AC_MSG_RESULT([${set_enable_internal_docs}])
+AM_CONDITIONAL([ENABLE_INTERNAL_DOCS], [test "x${set_enable_internal_docs}" = "xyes"])
+
 
 # ---------------------------------------------------------------------------
 # i18n support
 # ---------------------------------------------------------------------------
+ALL_LINGUAS="cs de es fr pl ru sk vi"
 GP_GETTEXT_HACK([${PACKAGE}-${LIBEXIF_CURRENT_MIN}],
                 [Lutz Mueller and others])
-ALL_LINGUAS="de es fr pl ru vi"
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
 AM_PO_SUBDIRS()
@@ -146,7 +172,7 @@ dnl ---------------------------------------------------------------------------
 dnl Compiler/Linker Options and Warnings
 dnl ---------------------------------------------------------------------------
 AM_CPPFLAGS="$AM_CPPFLAGS -I\$(top_srcdir)"
-AM_CPPFLAGS="$AM_CPPFLAGS -I\$(top_srcdir)/libexif"
+AM_CPPFLAGS="$AM_CPPFLAGS -I\$(top_builddir)"
 AM_LDFLAGS="$LDFLAGS"
 if test "x$GCC" = "xyes"; then
     AM_CFLAGS="$AM_CFLAGS -ansi -pedantic-error"
@@ -178,7 +204,8 @@ AC_CONFIG_FILES([
   doc/Makefile
   doc/Doxyfile
   doc/Doxyfile-internals
-  libexif/libexif.pc
+  libexif.pc
+  libexif-uninstalled.pc
   binary/Makefile
 ])
 AC_OUTPUT

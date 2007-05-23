@@ -36,6 +36,17 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_1 = $(HTML_APIDOC_DIR).uploaded
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_2 = $(HTML_APIDOC_DIR).stamp
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_3 = $(HTML_APIDOC_DIR).tar.gz
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_4 = $(HTML_APIDOC_INTERNALS_DIR).uploaded
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_5 = $(HTML_APIDOC_INTERNALS_DIR).stamp
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_6 = $(HTML_APIDOC_INTERNALS_DIR).tar.gz
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_7 = install-apidocs-internals
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_8 = uninstall-apidocs-internals
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_9 = install-apidocs
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_10 = uninstall-apidocs
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@am__append_11 = clean-apidocs
 subdir = doc
 DIST_COMMON = $(srcdir)/Doxyfile-internals.in $(srcdir)/Doxyfile.in \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -200,17 +211,23 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@HAVE_DOXYGEN_TRUE@DOXYGEN_FILES = 
-@HAVE_DOXYGEN_TRUE@DOXYGEN_STAMPS = $(HTML_APIDOC_DIR).stamp    $(HTML_APIDOC_INTERNALS_DIR).stamp $(DOXYGEN_OUTPUT_DIR).stamp
-@HAVE_DOXYGEN_TRUE@DOXYGEN_UPLOAD = $(HTML_APIDOC_DIR).uploaded $(HTML_APIDOC_INTERNALS_DIR).uploaded
-@HAVE_DOXYGEN_TRUE@DOC_APIDOC_HTML = api.html
-@HAVE_DOXYGEN_TRUE@DOC_APIDOC_INTERNALS_HTML = internals.html
+DOXYGEN_FILES = 
+DOXYGEN_STAMPS = $(am__append_2) $(am__append_5)
+DOXYGEN_UPLOAD = $(am__append_1) $(am__append_4)
+DOXYGEN_INSTALL_TARGETS = $(am__append_7) $(am__append_9)
+DOXYGEN_UNINSTALL_TARGETS = $(am__append_8) $(am__append_10)
+DOXYGEN_CLEAN_TARGETS = $(am__append_11)
+DOXYGEN_TARBALLS = $(am__append_3) $(am__append_6)
+
+# Directory names used while installing
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@DOC_APIDOC_HTML = api.html
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@DOC_APIDOC_INTERNALS_HTML = internals.html
 
 ########################################################################
 # Common part
 ########################################################################
 EXTRA_DIST = Doxyfile.in Doxyfile-internals.in README.apidocs $(HTML_APIDOC_DIR).tar.gz
-doc_DATA = $(DOXYGEN_FILES) README.apidocs
+doc_DATA = $(DOXYGEN_FILES)
 CLEANFILES = $(DOXYGEN_FILES) $(DOXYGEN_STAMPS)
 all: all-am
 
@@ -406,63 +423,50 @@ uninstall-am: uninstall-docDATA uninstall-local
 	uninstall-docDATA uninstall-local
 
 
-# FIXME: Depending on the source files would be sufficient...
-@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_DIR).stamp: Doxyfile $(top_builddir)/libexif/libexif.la
-@HAVE_DOXYGEN_TRUE@	doxygen $<
-@HAVE_DOXYGEN_TRUE@	echo > $@
+# FIXME: Depending on the source files would be sufficient.
+#        Depending on libexif.la works at least, however.
+$(top_builddir)/libexif/libexif.la:
+	cd $(top_builddir)/libexif && $(MAKE) libexif.la
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_DIR).stamp: Doxyfile $(top_builddir)/libexif/libexif.la
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(DOXYGEN) $<
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	echo > $@
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_DIR).tar.gz: $(HTML_APIDOC_DIR).stamp
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	(cd $(DOXYGEN_OUTPUT_DIR) && $(AMTAR) chof - $(HTML_APIDOC_DIR) | GZIP=--best gzip -c) > $@
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_INTERNALS_DIR).stamp: Doxyfile-internals $(top_builddir)/libexif/libexif.la
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(DOXYGEN) $<
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	echo > $@
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_INTERNALS_DIR).tar.gz: $(HTML_APIDOC_INTERNALS_DIR).stamp
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	(cd $(DOXYGEN_OUTPUT_DIR) && $(AMTAR) chof - $(HTML_APIDOC_INTERNALS_DIR) | GZIP=--best gzip -c) > $@
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@install-apidocs-internals: $(HTML_APIDOC_INTERNALS_DIR).stamp
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0755 -d $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0644 $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)/* $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)/
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@uninstall-apidocs-internals:
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	cd "$(DESTDIR)$(docdir)" && rm -f $(DOC_APIDOC_INTERNALS_HTML)/*
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rmdir $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@install-apidocs: $(HTML_APIDOC_DIR).stamp
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0755 -d $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0644 $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)/* $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)/
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@uninstall-apidocs:
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	cd "$(DESTDIR)$(docdir)" && rm -f $(DOC_APIDOC_HTML)/*
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rmdir $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@clean-apidocs:
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -rf $(DOXYGEN_OUTPUT_DIR)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -f $(HTML_APIDOC_DIR).tar.gz $(HTML_APIDOC_INTERNALS_DIR).tar.gz
 
-# FIXME: Depending on the source files would be sufficient...
-@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_INTERNALS_DIR).stamp: Doxyfile-internals $(top_builddir)/libexif/libexif.la
-@HAVE_DOXYGEN_TRUE@	doxygen $<
-@HAVE_DOXYGEN_TRUE@	echo > $@
-
-@HAVE_DOXYGEN_TRUE@$(DOXYGEN_OUTPUT_DIR).stamp: Doxyfile $(top_builddir)/libexif/libexif.la
-@HAVE_DOXYGEN_TRUE@	doxygen $<
-@HAVE_DOXYGEN_TRUE@	echo > $@
-
-@HAVE_DOXYGEN_TRUE@$(top_builddir)/libexif/libexif.la:
-@HAVE_DOXYGEN_TRUE@	cd $(top_builddir)/libexif && $(MAKE) libexif.la
-
-@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_DIR).tar.gz: $(DOXYGEN_OUTPUT_DIR).stamp
-@HAVE_DOXYGEN_TRUE@	(cd $(DOXYGEN_OUTPUT_DIR) && $(AMTAR) chof - $(HTML_APIDOC_DIR) | GZIP=--best gzip -c) > $@
-
-@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_INTERNALS_DIR).tar.gz: $(DOXYGEN_OUTPUT_DIR).stamp
-@HAVE_DOXYGEN_TRUE@	(cd $(DOXYGEN_OUTPUT_DIR) && $(AMTAR) chof - $(HTML_APIDOC_INTERNALS_DIR) | GZIP=--best gzip -c) > $@
-
-@HAVE_DOXYGEN_TRUE@install-apidocs-internals: $(HTML_APIDOC_INTERNALS_DIR).stamp
-@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0755 -d $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)
-@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0644 $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)/* $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)/
-
-@HAVE_DOXYGEN_TRUE@install-apidocs: $(HTML_APIDOC_DIR).stamp
-@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0755 -d $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)
-@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0644 $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)/* $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)/
-
-@HAVE_DOXYGEN_TRUE@uninstall-apidocs-internals:
-@HAVE_DOXYGEN_TRUE@	rm -f $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)/*
-@HAVE_DOXYGEN_TRUE@	rmdir $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)
-
-@HAVE_DOXYGEN_TRUE@uninstall-apidocs:
-@HAVE_DOXYGEN_TRUE@	rm -f $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)/*
-@HAVE_DOXYGEN_TRUE@	rmdir $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)
-
-@HAVE_DOXYGEN_TRUE@clean-apidocs:
-@HAVE_DOXYGEN_TRUE@	rm -rf $(DOXYGEN_OUTPUT_DIR)
-@HAVE_DOXYGEN_TRUE@	rm -f $(HTML_APIDOC_DIR).tar.gz
-
-@HAVE_DOXYGEN_TRUE@$(DOXYGEN_UPLOAD): $(DOXYGEN_STAMPS)
-@HAVE_DOXYGEN_TRUE@	find $(DOXYGEN_OUTPUT_DIR) \( -type d -exec chmod a+rx,go-w,g+s {} \; \) \
-@HAVE_DOXYGEN_TRUE@		-or \( -type f -exec chmod a+r {} \; \)
-@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/api/
-@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/internals/
-@HAVE_DOXYGEN_TRUE@	ssh "sf" "find /home/groups/l/li/libexif/htdocs/internals /home/groups/l/li/libexif/htdocs/api \( -type d -exec chgrp libexif {} \; -exec chmod g+rwxs,a+rx {} \; \) -or \( -type f -exec chgrp libexif {} \; -exec chmod g+rw {} \; \( -name '*.html' -or -name '*.png' -or -name '*.php' -or -name '*.jpg' -or -name '*.css' -name '*.dot' -name '*.map' \) -exec chmod a+r {} \; \)"
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(DOXYGEN_UPLOAD): $(DOXYGEN_STAMPS)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	find $(DOXYGEN_OUTPUT_DIR) \( -type d -exec chmod a+rx,go-w,g+s {} \; \) \
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		-or \( -type f -exec chmod a+r {} \; \)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/api/
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rsync -avz --progress $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)/ sf:/home/users/h/hu/hun/libexif/htdocs/internals/
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	ssh "sf" "find /home/groups/l/li/libexif/htdocs/internals /home/groups/l/li/libexif/htdocs/api \( -type d -exec chgrp libexif {} \; -exec chmod g+rwxs,a+rx {} \; \) -or \( -type f -exec chgrp libexif {} \; -exec chmod g+rw {} \; \( -name '*.html' -or -name '*.png' -or -name '*.php' -or -name '*.jpg' -or -name '*.css' -name '*.dot' -name '*.map' \) -exec chmod a+r {} \; \)"
 
 all-local: $(DOXYGEN_STAMPS)
 
-install-data-local: install-apidocs install-apidocs-internals
+install-data-local: $(DOXYGEN_INSTALL_TARGETS)
 
-uninstall-local: uninstall-apidocs uninstall-apidocs-internals
+uninstall-local: $(DOXYGEN_UNINSTALL_TARGETS)
 
-clean-local: clean-apidocs
+clean-local: $(DOXYGEN_CLEAN_TARGETS)
 
 upload: $(DOXYGEN_UPLOAD)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

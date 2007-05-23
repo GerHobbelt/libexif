@@ -180,7 +180,8 @@ mnote_olympus_entry_get_value (MnoteOlympusEntry *entry, char *v, unsigned int m
 	memset (v, 0, maxlen);
 	maxlen--;
 
-	if ((!entry->data) && (entry->components > 0)) return (v);
+	if ((!entry->data) && (entry->components > 0)) 
+		return (v);
 
 	switch (entry->tag) {
 	
@@ -215,7 +216,7 @@ mnote_olympus_entry_get_value (MnoteOlympusEntry *entry, char *v, unsigned int m
                 //vl =  exif_get_long (entry->data  , entry->order);
                 //printf("-> 0x%04x\n",entry->data);
                 //printf("-> 0x%s<\n",entry->data - 0);
-                memcpy(v, entry->data ,entry->components);
+                memcpy(v, entry->data, MIN(maxlen, entry->size));
                 //snprintf (v, maxlen, "%s<",  ( entry->data - 9  );
                 break;
 	case MNOTE_NIKON_TAG_COLORMODE:
@@ -230,7 +231,7 @@ mnote_olympus_entry_get_value (MnoteOlympusEntry *entry, char *v, unsigned int m
 	case MNOTE_NIKON_TAG_ADAPTER:
 	case MNOTE_NIKON_TAG_SATURATION2:
                 CF (entry->format, EXIF_FORMAT_ASCII, v, maxlen);
-                memcpy(v, entry->data, MIN (maxlen, entry->components));
+                memcpy(v, entry->data, MIN (maxlen, entry->size));
                 break;
 	case MNOTE_NIKON_TAG_TOTALPICTURES:
                 CF (entry->format, EXIF_FORMAT_LONG, v, maxlen);
@@ -555,8 +556,7 @@ mnote_olympus_entry_get_value (MnoteOlympusEntry *entry, char *v, unsigned int m
 	default:
 		switch (entry->format) {
 		case EXIF_FORMAT_ASCII:
-			strncpy (v, (char *)entry->data,
-				 MIN (maxlen, entry->components));
+			strncpy (v, (char *)entry->data, MIN (maxlen, entry->size));
 			break;
 		case EXIF_FORMAT_SHORT:
 			vs = exif_get_short (entry->data, entry->order);

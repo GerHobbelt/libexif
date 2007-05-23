@@ -407,7 +407,7 @@ static struct {
 	 { ESL_NNNN, ESL_NNNN, ESL_NNNO, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_SHUTTER_SPEED_VALUE, "ShutterSpeedValue", N_("Shutter speed"),
 	 N_("Shutter speed. The unit is the APEX (Additive System of "
-	    "Photographic Exposure) setting (see Appendix C)."),
+	    "Photographic Exposure) setting."),
 	 { ESL_NNNN, ESL_NNNN, ESL_OOOO, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_APERTURE_VALUE, "ApertureValue", N_("Aperture"),
 	 N_("The lens aperture. The unit is the APEX value."),
@@ -486,6 +486,16 @@ static struct {
 	 N_("A tag used to record fractions of seconds for the "
 	    "<DateTimeDigitized> tag."),
 	 { ESL_NNNN, ESL_NNNN, ESL_OOOO, ESL_NNNN, ESL_NNNN } },
+	{EXIF_TAG_XP_TITLE, "XPTitle", N_("XP Title"), "",
+	 { ESL_OOOO, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
+	{EXIF_TAG_XP_COMMENT, "XPComment", N_("XP Comment"), "",
+	 { ESL_OOOO, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
+	{EXIF_TAG_XP_AUTHOR, "XPAuthor", N_("XP Author"), "",
+	 { ESL_OOOO, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
+	{EXIF_TAG_XP_KEYWORDS, "XPKeywords", N_("XP Keywords"), "",
+	 { ESL_OOOO, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
+	{EXIF_TAG_XP_SUBJECT, "XPSubject", N_("XP Subject"), "",
+	 { ESL_OOOO, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_FLASH_PIX_VERSION, "FlashPixVersion", "FlashPixVersion",
 	 N_("The FlashPix format version supported by a FPXR file."),
 	 { ESL_NNNN, ESL_NNNN, ESL_MMMM, ESL_NNNN, ESL_NNNN } },
@@ -496,15 +506,14 @@ static struct {
 	    "conditions and environment. If a color space other than "
 	    "sRGB is used, Uncalibrated (=FFFF.H) is set. Image data "
 	    "recorded as Uncalibrated can be treated as sRGB when it is "
-	    "converted to FlashPix. On sRGB see Appendix E."),
+	    "converted to FlashPix."),
 	 { ESL_NNNN, ESL_NNNN, ESL_MMMM, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_PIXEL_X_DIMENSION, "PixelXDimension", "PixelXDimension",
 	 N_("Information specific to compressed data. When a "
 	    "compressed file is recorded, the valid width of the "
 	    "meaningful image must be recorded in this tag, whether or "
 	    "not there is padding data or a restart marker. This tag "
-	    "should not exist in an uncompressed file. For details see "
-	    "section 2.8.1 and Appendix F."),
+	    "should not exist in an uncompressed file."),
 	 { ESL_NNNN, ESL_NNNN, ESL_NNNM, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_PIXEL_Y_DIMENSION, "PixelYDimension", "PixelYDimension",
 	 N_("Information specific to compressed data. When a compressed "
@@ -641,7 +650,7 @@ static struct {
 	 N_("This tag indicates the type of scene that was shot. It can "
 	    "also be used to record the mode in which the image was "
 	    "shot. Note that this differs from the scene type "
-	    "(SceneType) tag.")},
+	    "<SceneType> tag.")},
 	{EXIF_TAG_GAIN_CONTROL, "GainControl", N_("Gain Control"),
 	 N_("This tag indicates the degree of overall image gain "
 	    "adjustment.")},

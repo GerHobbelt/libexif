@@ -193,7 +193,13 @@ exif_data_load_data_entry (ExifData *data, ExifEntry *entry,
 
 	/* If this is the MakerNote, remember the offset */
 	if (entry->tag == EXIF_TAG_MAKER_NOTE) {
-		if (entry->size > 6) exif_log (data->priv->log,
+		if (!entry->data) {
+			exif_log (data->priv->log,
+                                               EXIF_LOG_CODE_DEBUG, "ExifData",
+                                               "MakerNote found with NULL data");	
+		}
+		else if (entry->size > 6) 
+			exif_log (data->priv->log,
 					       EXIF_LOG_CODE_DEBUG, "ExifData",
 					       "MakerNote found (%02x %02x %02x %02x "
 					       "%02x %02x %02x...).",
@@ -648,7 +654,9 @@ typedef enum {
 	EXIF_DATA_TYPE_MAKER_NOTE_NONE		= 0,
 	EXIF_DATA_TYPE_MAKER_NOTE_CANON		= 1,
 	EXIF_DATA_TYPE_MAKER_NOTE_OLYMPUS	= 2,
-	EXIF_DATA_TYPE_MAKER_NOTE_PENTAX	= 3
+	EXIF_DATA_TYPE_MAKER_NOTE_PENTAX		= 3,
+	EXIF_DATA_TYPE_MAKER_NOTE_NIKON		= 4,
+	EXIF_DATA_TYPE_MAKER_NOTE_CASIO		= 5
 } ExifDataTypeMakerNote;
 
 static ExifDataTypeMakerNote
@@ -661,7 +669,7 @@ exif_data_get_type_maker_note (ExifData *d)
 		return EXIF_DATA_TYPE_MAKER_NOTE_NONE;
 	
 	e = exif_data_get_entry (d, EXIF_TAG_MAKER_NOTE);
-        if (!e) 
+	if (!e) 
 		return EXIF_DATA_TYPE_MAKER_NOTE_NONE;
 
 	/* Olympus & Nikon */
@@ -682,9 +690,15 @@ exif_data_get_type_maker_note (ExifData *d)
 		if (!strncasecmp (
 			    exif_entry_get_value (em, value, sizeof(value)),
 			    "Nikon", 5))
-			return EXIF_DATA_TYPE_MAKER_NOTE_OLYMPUS;
+			return EXIF_DATA_TYPE_MAKER_NOTE_NIKON;
 		else
 			return EXIF_DATA_TYPE_MAKER_NOTE_PENTAX;
+	}
+	if ((e->size >= 8) && !memcmp (e->data, "AOC", 4)) {
+		return EXIF_DATA_TYPE_MAKER_NOTE_PENTAX;
+	}
+	if ((e->size >= 8) && !memcmp (e->data, "QVC", 4)) {
+		return EXIF_DATA_TYPE_MAKER_NOTE_CASIO;
 	}
 
 	return EXIF_DATA_TYPE_MAKER_NOTE_NONE;
@@ -828,11 +842,10 @@ exif_data_load_data (ExifData *data, const unsigned char *d_orig,
 		/* Sanity check. */
 		if (offset > ds - 6) {
 			exif_log (data->priv->log, EXIF_LOG_CODE_CORRUPT_DATA,
-				  "ExifData", "Bogus offset.");
-			return;
+				  "ExifData", "Bogus offset of IFD1.");
+		} else {
+		   exif_data_load_data_content (data, EXIF_IFD_1, d + 6, ds - 6, offset, 0);
 		}
-
-		exif_data_load_data_content (data, EXIF_IFD_1, d + 6, ds - 6, offset, 0);
 	}
 
 	/*
@@ -843,9 +856,11 @@ exif_data_load_data (ExifData *data, const unsigned char *d_orig,
 	 */
 	switch (exif_data_get_type_maker_note (data)) {
 	case EXIF_DATA_TYPE_MAKER_NOTE_OLYMPUS:
+	case EXIF_DATA_TYPE_MAKER_NOTE_NIKON:
 		data->priv->md = exif_mnote_data_olympus_new (data->priv->mem);
 		break;
 	case EXIF_DATA_TYPE_MAKER_NOTE_PENTAX:
+	case EXIF_DATA_TYPE_MAKER_NOTE_CASIO:
 		data->priv->md = exif_mnote_data_pentax_new (data->priv->mem);
 		break;
 	case EXIF_DATA_TYPE_MAKER_NOTE_CANON:
