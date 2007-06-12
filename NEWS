@@ -1,3 +1,8 @@
+libexif-0.6.16 (2007-06-12):
+  * Security fix: CVE-2006-4168 aka IDEF1514.
+  * Updated translations: cz, pl, vi
+
+
 New in 0.6.15 (2007-05-23) since 0.6.14 (2007-05-10):
 
   * Added support for 2 new types of Pentax makernotes & Casio type2 makernote

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libexif\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-21 15:49+0200\n"
+"POT-Creation-Date: 2007-06-12 15:13+0200\n"
 "PO-Revision-Date: 2005-03-12 05:42+0100\n"
 "Last-Translator: Arnaud Launay <asl@launay.org>\n"
 "Language-Team: Français <traduc@traduc.org>\n"
@@ -1334,47 +1334,47 @@ msgstr "Motorola"
 msgid "Intel"
 msgstr "Intel"
 
-#: libexif/exif-data.c:709
+#: libexif/exif-data.c:714
 msgid "Size of data too small to allow for EXIF data."
 msgstr ""
 
-#: libexif/exif-data.c:770
+#: libexif/exif-data.c:775
 msgid "EXIF marker not found."
 msgstr ""
 
-#: libexif/exif-data.c:797
+#: libexif/exif-data.c:802
 msgid "EXIF header not found."
 msgstr ""
 
-#: libexif/exif-data.c:813
+#: libexif/exif-data.c:818
 #, fuzzy
 msgid "Unknown encoding."
 msgstr "Inconnu"
 
-#: libexif/exif-data.c:1117
+#: libexif/exif-data.c:1122
 #, fuzzy
 msgid "Ignore unknown tags"
 msgstr "Inconnu"
 
-#: libexif/exif-data.c:1118
+#: libexif/exif-data.c:1123
 msgid "Ignore unknown tags when loading EXIF data."
 msgstr ""
 
-#: libexif/exif-data.c:1119
+#: libexif/exif-data.c:1124
 msgid "Follow specification"
 msgstr ""
 
-#: libexif/exif-data.c:1120
+#: libexif/exif-data.c:1125
 msgid ""
 "Add, correct and remove entries to get EXIF data that follows the "
 "specification."
 msgstr ""
 
-#: libexif/exif-data.c:1122
+#: libexif/exif-data.c:1127
 msgid "Don not change maker note"
 msgstr ""
 
-#: libexif/exif-data.c:1123
+#: libexif/exif-data.c:1128
 msgid ""
 "When loading and resaving Exif data, save the maker note unmodified. Be "
 "aware that the maker note can get corrupted."
@@ -2081,7 +2081,8 @@ msgstr "YCbCr4:2:2"
 msgid "YCbCr4:2:0"
 msgstr "YCbCr4:2:0"
 
-#: libexif/exif-entry.c:865
+#: libexif/exif-entry.c:865 libexif/pentax/mnote-pentax-entry.c:392
+#: libexif/pentax/mnote-pentax-entry.c:420
 #, c-format
 msgid "%i bytes unknown data"
 msgstr "%i de données inconnues"
@@ -3608,23 +3609,23 @@ msgid "AF Position: Far Right"
 msgstr ""
 
 #: libexif/olympus/mnote-olympus-entry.c:325
-#, fuzzy
 msgid "Unknown AF Position"
-msgstr "Version d'exif"
+msgstr ""
 
 #: libexif/olympus/mnote-olympus-entry.c:358
+#: libexif/pentax/mnote-pentax-entry.c:344
+#: libexif/pentax/mnote-pentax-entry.c:367
 msgid "Internal error"
 msgstr ""
 
 #: libexif/olympus/mnote-olympus-entry.c:379
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown value %hi"
-msgstr "Inconnu"
+msgstr ""
 
 #: libexif/olympus/mnote-olympus-entry.c:408
-#, fuzzy
 msgid "Infinite"
-msgstr "Intel"
+msgstr ""
 
 #: libexif/olympus/mnote-olympus-entry.c:422
 msgid "normal"
@@ -3688,9 +3689,9 @@ msgid "One-touch"
 msgstr ""
 
 #: libexif/olympus/mnote-olympus-entry.c:571
-#, fuzzy, c-format
-msgid "%li bytes unknown data: "
-msgstr "%li de données inconnues"
+#, c-format
+msgid "%i bytes unknown data: "
+msgstr "%i de données inconnues: "
 
 #: libexif/olympus/mnote-olympus-tag.c:37
 #, fuzzy
@@ -4245,6 +4246,16 @@ msgstr ""
 #, fuzzy
 msgid "Digital Filter?"
 msgstr "Valeur du zoom numérique"
+
+#: libexif/pentax/mnote-pentax-entry.c:353
+#, c-format
+msgid "Internal error (unknown value %i)"
+msgstr ""
+
+#: libexif/pentax/mnote-pentax-entry.c:376
+#, c-format
+msgid "Internal error (unknown value %i %i)"
+msgstr ""
 
 #: libexif/pentax/mnote-pentax-tag.c:34 libexif/pentax/mnote-pentax-tag.c:61
 #, fuzzy

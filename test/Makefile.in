@@ -31,9 +31,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = test-mem$(EXEEXT) test-value$(EXEEXT)
+TESTS = test-mem$(EXEEXT) test-value$(EXEEXT) test-integers$(EXEEXT)
 check_PROGRAMS = test-mem$(EXEEXT) test-mnote$(EXEEXT) \
-	test-value$(EXEEXT)
+	test-value$(EXEEXT) test-integers$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,6 +52,9 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
+test_integers_SOURCES = test-integers.c
+test_integers_OBJECTS = test-integers.$(OBJEXT)
+test_integers_LDADD = $(LDADD)
 test_mem_SOURCES = test-mem.c
 test_mem_OBJECTS = test-mem.$(OBJEXT)
 am__DEPENDENCIES_1 =
@@ -77,8 +80,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = test-mem.c test-mnote.c test-value.c
-DIST_SOURCES = test-mem.c test-mnote.c test-value.c
+SOURCES = test-integers.c test-mem.c test-mnote.c test-value.c
+DIST_SOURCES = test-integers.c test-mem.c test-mnote.c test-value.c
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -269,6 +272,9 @@ clean-checkPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+test-integers$(EXEEXT): $(test_integers_OBJECTS) $(test_integers_DEPENDENCIES) 
+	@rm -f test-integers$(EXEEXT)
+	$(LINK) $(test_integers_OBJECTS) $(test_integers_LDADD) $(LIBS)
 test-mem$(EXEEXT): $(test_mem_OBJECTS) $(test_mem_DEPENDENCIES) 
 	@rm -f test-mem$(EXEEXT)
 	$(LINK) $(test_mem_OBJECTS) $(test_mem_LDADD) $(LIBS)
@@ -285,6 +291,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-integers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-mem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-mnote.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-value.Po@am__quote@
