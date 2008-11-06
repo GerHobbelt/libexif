@@ -1,3 +1,273 @@
+2008-11-06  Dan Fandrich <dan@coneharvesters.com>
+
+	* Released 0.6.17
+
+2008-11-05  Dan Fandrich <dan@coneharvesters.com>
+
+	* aolserver/*: moved to contrib/aolserver/
+	* README: updated
+	* po/de.po: Updated German translation by Marcus Meissner
+	* Added contrib/watcom/ directory to the source tarball now that
+	  Jan Patera brought it up-to-date.
+	* libexif.spec.in: changed default release number to 1; added NEWS,
+	  AUTHORS and COPYING files to package; moved libexif.so file to -devel
+	  package; corrected license to LGPL
+
+2008-10-20  Jan Patera <patera@users.sourceforge.net>
+
+	* libexif/pentax/mnote-pentax-tag.c & olympus/mnote-olympus-tag.c:
+	  Don't crash in mnote_XX_tag_get_description on unknown tags
+
+2008-10-04  Jan Patera <patera@users.sourceforge.net>
+
+	* libexif/canon/mnote-canon-entry.c: fixed interpretation
+	  of Auto ISO and Self-Timer entries
+
+2008-10-08  Aric Blumer <aricblumer@users.sourceforge.net>
+
+	* libexif/exif-tag.c: GPS tags EXIF_TAG_GPS_IMG_DIRECTION_REF
+	  and EXIF_TAG_GPS_IMG_DIRECTION are now recognized
+
+2008-10-04  Jan Patera <patera@users.sourceforge.net>
+
+	* libexif/olympus/exif-mnote-data-olympus.c: bug #2071600,
+	  gnome Bug #549029: Original v1 Nikon makernotes
+	  are always parsed using MM order, regardless of
+	  main EXIF data word order.
+
+2008-10-04  Louis Strous <louis_strous@users.sourceforge.net>
+
+	* libexif/exif-loader.c: DHT & DQT markers are now properly
+	  skipped when searching for APP1 marker in JPEG stream.
+	  Apparently such files are created by Gisteq PhotoTrackr SW
+	  used to add GPS tags.
+
+2008-10-02  Niek Bergboer <niek@google.com>
+
+	* libexif/exif-data.c libexif/canon/exif-mnote-data-canon.c
+	  libexif/fuji/exif-mnote-data-fuji.c
+	  libexif/olympus/exif-mnote-data-olympus.c
+	  libexif/pentax/exif-mnote-data-pentax.c:
+	  Replaced unsigned int by size_t in some places
+	  Added some checks on sizes, makernotes shouldn't
+	  be larger than 64kb.
+
+2008-09-04  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/nl.po: Updated Dutch translation by Erwin Poeze
+
+2008-07-25  Marcus Meissner  <marcus@jet.franken.de>
+
+	* libexif/exif-content.c: Handle realloc to 0 case
+	  correctly. Fixes EOG and GIMP crashes.
+
+2008-06-26  Jan Patera <patera@users.sourceforge.net>
+
+	* libexif/olympus/exif-mnote-data-olympus.c: better support for
+	  MNOTE_OLYMPUS_TAG_FLASHDEVICE/SENSORTEMPERATURE/LENSTEMPERATURE
+
+2008-06-23  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Patch by Mika Raento <mikie@google.com>:
+
+	* libexif/exif-loader.c: (exif_loader_free) Don't forget the logger.
+
+2008-06-15  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* configure.ac: Revert previous commit
+	* po/zh_CN.po: Remove.
+	* po/[sk,vi].po: Revert.
+
+2008-06-15  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* configure.ac: New po-file: zh_CN
+	* po/zh_CN.po: New
+	* po/[sk,vi].po: Updated.
+
+2008-05-06  Marcus Meissner  <meissner@suse.de>
+
+	* libexif/exif-content.c: Fixed a endless loop
+	  possibility in content remove (triggered by EOG
+	  and potentially others on certain JPEGs).
+
+2008-04-03  Dan Fandrich <dan@coneharvesters.com>
+
+	po/sk.po: Updated Slovak translation by Ivan MasÃ¡r
+
+2008-02-20  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Follow-up on #1774591:
+
+	* libexif/exif-data.c: (exif_data_save_data_content) Remove check for
+	now impossible NULL value.
+
+2008-02-17  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Fix #1865046:
+
+	* COPYING:
+	* libexif/...: Use 'ue' instead of some strange German character.
+
+2008-02-17  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* libexif/exif-loader.c: (exif_loader_get_data) Return NULL if no
+	EXIF data has been found.
+
+2008-02-16  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Jan Patera <patera@pictview.com> spotted a problem with my last fix
+	for #1774591:
+
+	* libexif/exif-content.c: (exif_content_remove_entry) Recover
+	correctly in case of error by remembering the original size of the
+	realloc'ed data.
+	* libexif/exif-data.c: (exif_data_save_data_entry),
+	(exif_data_save_data_content) Same here.
+	* libexif/canon/exif-mnote-data-canon.c:
+	(exif_mnote_data_canon_save), (exif_mnote_data_canon_load) Same here.
+        * libexif/fuji/exif-mnote-data-fuji.c:
+        (exif_mnote_data_fuji_save), (exif_mnote_data_fuji_load) Same here.
+        * libexif/olympus/exif-mnote-data-olympus.c:
+        (exif_mnote_data_olympus_save) Same here.
+
+2008-02-15  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* Changelog
+	* README: use 'ue' instead of some stange German character.
+
+2008-02-14  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Fix #1774591 (partially):
+
+	* libexif/exif-content.c: (exif_content_remove_entry) Check the
+	return value of exif_mem_realloc.
+	* libexif/exif-data.c: (exif_data_save_data_entry), 
+	(exif_data_save_data_content) Same here.
+	* libexif/canon/exif-mnote-data-canon.c:
+	(exif_mnote_data_canon_save), (exif_mnote_data_canon_load) Same here.
+	* libexif/fuji/exif-mnote-data-fuji.c:
+	(exif_mnote_data_fuji_save), (exif_mnote_data_fuji_load) Same here.
+	* libexif/olympus/exif-mnote-data-olympus.c:
+	(exif_mnote_data_olympus_save) Same here.
+
+2008-02-14  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Fix #1884609 (partially):
+
+	* libexif/exif-entry.c: (exif_entry_initialize) Initialize
+	EXIF_TAG_FLASH and EXIF_TAG_COLOR_SPACE.
+
+2007-12-27  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Suggestion by Andreas Kleinert <Andreas_Kleinert@gmx.de>:
+
+	* libexif/exif-entry.c: (exif_entry_get_value) Use %lf for double
+	instead of %f (which is for float).
+
+2007-12-20  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Updated translations by Translation Project Robot
+	<robot@translationproject.org>:
+
+	* po/[vi,pl].po: Updated files.
+
+2007-12-18  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Dan Fandrich <dan@coneharvesters.com> pointed out the following:
+
+	* configure.ac: Keep gettext requirement as low as 0.14.1.
+	gettextize changes it automatically to 0.17, but as long as we don't
+	know why, there is no need to enforce this version.
+
+2007-12-16  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Marcus Meissner <marcus@jet.franken.de> pointed out the following:
+
+	* libexif/exif-data.c: (exif_data_load_data_thumbnail) ExifLong is
+	unsigned. Therefore no need to check for negative values. Check for
+	sane offset instead.
+
+2007-12-15  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* po/*.po: Updated po-files.
+	* libexif/exif-data.c: (exif_data_load_data_thumbnail) guard against 
+	negative size (in addition to negative offset), too.
+
+2007-12-14  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Bug pointed out by Meder Kydyraliev, Google Security Team:
+
+	* libexif/exif-data.c: (exif_data_load_data_thumbnail) Ignore bugus
+	data.
+
+2007-12-14  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* README: Point users to some tools needed to build libexif.
+	* configure.ac: It looks like po/Makefile.in is already registered
+	with AC_CONFIG_FILES (whatever this means).
+
+2007-12-14  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Bug pointed out by Meder Kydyraliev, Google Security Team:
+
+	* libexif/exif-loader.c: (exif_loader_write) Ignore buffers of
+	zero length.
+
+2007-12-07  Jan Patera <patera@users.sourceforge.net>
+
+	* Added support for Fuji makernotes
+
+2007-11-13  Dan Fandrich <dan@coneharvesters.com>
+	* Added support for a new macro NO_VERBOSE_TAG_DATA to allow
+	  some size reduction but still retain the ability to properly
+	  interpret each tag.
+	* Added an end-of-table marker in the Canon color_information
+	  makernote table that could otherwise potentially cause a crash 
+	  on a bad image.
+
+2007-11-12  Dan Fandrich <dan@coneharvesters.com>
+	* Added support for more Olympus makernotes, based on data on
+	  Phil Harvey's ExifTool page at
+	  http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/
+	  and sanity checked by the pel-images in the libexif test suite.
+	* Added support for Sanyo makernotes, which have the identical
+	  tag format and (so it seems) namespace of the Olympus tags.
+
+2007-11-08  Dan Fandrich <dan@coneharvesters.com>
+	* Added Canadian English translation, eh?
+
+2007-11-06  Dan Fandrich <dan@coneharvesters.com>
+	* Renamed EXIF_TAG_UNKNOWN_C4A5 to EXIF_TAG_PRINT_IMAGE_MATCHING
+	  The PIM entry seems to have a format consisting of an 8 byte
+	  magic number, 6 byte version number, 2 byte record count field,
+	  then a series of 6 byte records consisting of a 2 byte tag field
+	  and an 4 byte data field.
+
+2007-10-29  Dan Fandrich <dan@coneharvesters.com>
+	* Fixed some typos in messages
+	* Made some structs const
+	* Support compiling away the detailed tag tables and log messages when
+	  the NO_VERBOSE_TAG_STRINGS macro is defined to reduce the size of
+	  the library for use in embedded applications where space is at
+	  a premium
+	* Display the raw value of a tag when the tag is unknown
+
+2007-09-12  Jan Patera <patera@users.sourceforge.net>
+
+	* Enhancements to Canon makernote parsers submitted by Thorsten Kukuk
+	* Added Dutch and Swedish translations, updated Slovak translation
+
+2007-08-16  Jan Patera <patera@users.sourceforge.net>
+
+	* exif-mnote-data-olympus.c: Fix of bugs #1773810, #1774626, gnome bug #466044:
+	  Some Olympus files have main IFD in MM byte order as well as makernote, but
+	  makernote order was guessed wrongly. Bug introduced when fixing bug #1525770.
+
+2007-06-25  Jan Patera <patera@users.sourceforge.net>
+
+	* Endianess of Nikon V1 makernotes is now guessed, it might not
+	  be the same as of the main IFD
+
 2007-05-21  Jan Patera <patera@users.sourceforge.net>
 
 	* First version of Czech localization (cs.po)
@@ -1028,85 +1298,85 @@
 
 	* libexif/exif-entry.c (exif_entry_get_value): Support USER_COMMENT.
 
-2002-12-31  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-31  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* README: Some information by Sander van Geloven
 	  <svgeloven@zonnet.nl>.
 
-2002-12-11  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-11  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-entry.c (exif_entry_initialize): Fix last commit.
 
-2002-12-11  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-11  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-entry.c (exif_entry_initialize): Support USER_COMMENT.
 	* configure.in: Version 0.5.9
 
-2002-12-09  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-09  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* README: New frontend 'thirdeye'.
 
-2002-12-07  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-07  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.5.8
 
-2002-12-02  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-02  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/Makefile.am: Forgot to remove the some subdirs.
 
-2002-12-02  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-02  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Remove some Makefiles
 
-2002-12-02  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-02  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Reflect removal of exif-note.h in version.
 
-2002-12-02  Lutz Müller <lutz@users.sourceforge.net>
+2002-12-02  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-note.[c,h]: Removed. Now in libmnote.
 
-2002-09-16  Lutz Müller <lutz@users.sourceforge.net>
+2002-09-16  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif: Some fixes for Windows (Visual C++) by
 	  Andres <aplaza@smalcamera.com>
 
-2002-09-15  Lutz Müller <lutz@users.sourceforge.net>
+2002-09-15  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: IRIS fixes by Andrea Suatoni
 	  <a.suatoni@telefonica.net>
 	
-2002-09-15  Lutz Müller <lutz@users.sourceforge.net>
+2002-09-15  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in:
 	* po/es.po: Spanish translation by Fabian Mandelbaum
 	  <fabman@2vias.com.ar>
 
-2002-08-30  Lutz Müller <lutz@users.sourceforge.net>
+2002-08-30  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-data.c: Some cleanup.
 
-2002-08-29  Lutz Müller <lutz@users.sourceforge.net>
+2002-08-29  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Renchi Raju <renchi@pooh.tam.uiuc.edu> found another bug in 
 
 	* libexif/exif-data.c: Correctly save the data.
 	* configure.in: Version 0.5.6.
 
-2002-08-29  Lutz Müller <lutz@users.sourceforge.net>
+2002-08-29  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Jason Sodergren <jason@taiga.com> found a lot of bugs in
 
 	* libexif/exif-data.c: Correctly save the data.
 	* configure.in: Version 0.5.5.
 
-2002-08-29  Lutz Müller <lutz@users.sourceforge.net>
+2002-08-29  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Another fixes related to #564019:
 
 	* libexif: Make code conform to ISO C standard, section 6.5.2.3.
 
-2002-08-29  Lutz Müller <lutz@users.sourceforge.net>
+2002-08-29  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Bug reported by Jason Sodergren <jason@taiga.com>:
 
@@ -1117,7 +1387,7 @@
 	* configure.in: Version 0.5.4dev
 		distinguish release versions from CVS versions
 
-2002-07-25  Lutz Müller <lutz@users.sourceforge.net>
+2002-07-25  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-ifd.[c,h]: New.
 	* libexif/exif-data.h: Introduce an array of ExifContents. This 
@@ -1126,95 +1396,95 @@
 	  code to make it compile again.
 	* configure.in: Version 0.5.4.
 
-2002-07-25  Lutz Müller <lutz@users.sourceforge.net>
+2002-07-25  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by anonymous user:
 
 	* libexif/exif-[byte-order,format,result,tag].h: Make code comply with
 	  ISO C standard, section 6.5.2.3.
 
-2002-07-25  Lutz Müller <lutz@users.sourceforge.net>
+2002-07-25  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Takuro Ashie <makeinu@users.sourceforge.net>:
 
 	* libexif/exif-data.c: Plug memory leak.
 
-2002-07-10  Lutz Müller <lutz@users.sourceforge.net>
+2002-07-10  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Bug spotted by Andres <aplaza@smalcamera.com>:
 
 	* libexif/exif-data.c: Save the EXIF_TAG_INTEROPERABILITY_IFD_POINTER
 	  in ifd_exif, not in ifd0.
 
-2002-06-26  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-26  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Jos van den Oever <oever@fenk.wau.nl>: Make libexif c++
 	friendly.
 
-2002-06-14  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-14  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Correct -version-info.
 
-2002-06-11  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-11  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.5.3
 
-2002-06-11  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-11  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/Makefile.am: Oops, missed those konica entries.
 
-2002-06-10  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-10  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.5.2
 
-2002-06-10  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-10  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: We need autoconf > 2.50.
 
-2002-06-09  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-09  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Internationalization.
 
-2002-06-08  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-08  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Guido Ostkamp <guido.ostkamp@t-online.de>
 
 	* libexif/exif-data.c: Increment offset by 12.
 
-2002-06-06  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-06  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Bug spotted by Andres <aplaza@smalcamera.com>:
 
 	* exif-entry.c: Fix typo.
 
-2002-06-05  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-05  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* COPYING: Check the text of the LGPL in, because otherwise, 
 	  automake --add-missing would use the text of the GPL.
 
-2002-06-03  Lutz Müller <lutz@users.sourceforge.net>
+2002-06-03  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.5.1
 
-2002-05-01  Lutz Müller <lutz@users.sourceforge.net>
+2002-05-01  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Arnaud Rouanet <rouanet@labri.fr>:
 
 	* libexif/exif-entry.c (exif_entry_get_value): Fix typo.
 
-2002-04-30  Lutz Müller <lutz@users.sourceforge.net>
+2002-04-30  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Arnaud Rouanet <rouanet@labri.fr>:
 
 	* libexif/exif-entry.c (exif_entry_get_value): Support version 2.2.
 
-2002-04-18  Lutz Müller <lutz@users.sourceforge.net>
+2002-04-18  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Marcus Meissner <marcus@jet.franken.de>:
 
 	* libexif/*.h: Make header files c++ friendly.
 
-2002-04-16  Lutz Müller <lutz@users.sourceforge.net>
+2002-04-16  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Enhancements by Semyon Sosin <sem@best.com>, adapted:
 
@@ -1222,7 +1492,7 @@
 	* libexif/exif-entry.[c,h] (exif_entry_get_value_brief): New.
 	* README: Add a note about libjpeg.
 
-2002-04-15  Lutz Müller <lutz@users.sourceforge.net>
+2002-04-15  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Enhancements by Semyon Sosin <sem@best.com>, adapted:
 
@@ -1234,7 +1504,7 @@
 
 	* Makefile.am: dded .tar.bz2 packaging to "make dist"
 
-2002-03-01  Lutz Müller <lutz@users.sourceforge.net>
+2002-03-01  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Mark Pulford <mark@kyne.com.au>:
 
@@ -1242,98 +1512,98 @@
 	* configure.in:
 	* Makefile.am: Create libexif.spec
 
-2002-02-28  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-28  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Javier Achirica <achirica@ttd.net>:
 
 	* libexif/exif-data.c: Fix directory length and termination.
 
-2002-02-28  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-28  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-entry.c (exif_entry_get_value): Add support for
 	  EXIF_TAG_SUBJECT_AREA.
 
-2002-02-28  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-28  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Javier Achirica <achirica@ttd.net>:
 
 	* libexif/exif-tag.[c,h]:
 	* libexif/exif-entry.c: Support EXIF-2.2 tags.
 
-2002-02-25  Lutz MÜller <lutz@users.sourceforge.net>
+2002-02-25  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch by Basil Dias <basil.dias@wipro.com>:
 
 	* libjpeg/jpeg-data.c: Missing realloc.
 
-2002-02-21  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-21  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/canon: Set up support for parsing MakerNotes.
 
-2002-02-20  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-20  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-data.c:
 	* libjpeg/jpeg-data.c: Read and write "rb" (Windows needs it).
 
-2002-02-18  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-18  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-data.c: Suppress output unless #ifdef DEBUG
 
-2002-02-17  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-17  Lutz Mueller <lutz@users.sourceforge.net>
 
 	Patch from Fredrik <fredrik@krixor.xy.org>:
 
 	* libexif/exif-data.c: Better checks for size.
 
-2002-02-13  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-13  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/configure.in: Introduce proper versionning.
 
-2002-02-13  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-13  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif: There's only one ByteOrder per ExifData.
 
-2002-02-12  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-12  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/exif-entry.c: More initialization.
 
-2002-02-11  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-11  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.5
 
-2002-02-11  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-11  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif/libexif-entry.c: More tags implemented in
 	  (exif_entry_get_value).
 
-2002-02-06  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-06  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.4
 
-2002-02-05  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-05  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.3
 
-2002-02-05  Lutz Müller <lutz@users.sourceforge.net>
+2002-02-05  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* libexif: Implement saving.
 
-2002-01-29  Lutz Müller <lutz@users.sourceforge.net>
+2002-01-29  Lutz Mueller <lutz@users.sourceforge.net>
 
 	* configure.in: Version 0.2
 
-2002-01-06  Lutz Müller <urc8@rz.uni-karlsruhe.de>
+2002-01-06  Lutz Mueller <urc8@rz.uni-karlsruhe.de>
 
 	Merge new stuff from gtkam/libexif.
 
-2001-12-23  Lutz Müller <urc8@rz.uni-karlsruhe.de>
+2001-12-23  Lutz Mueller <urc8@rz.uni-karlsruhe.de>
 
 	Merge new stuff from gtkam/libexif.
 
-2001-12-21  Lutz Müller <urc8@rz.uni-karlsruhe.de>
+2001-12-21  Lutz Mueller <urc8@rz.uni-karlsruhe.de>
 
 	Move new version from gtkam to here.
 
-2001-12-11  Lutz Müller <urc8@rz.uni-karlsruhe.de>
+2001-12-11  Lutz Mueller <urc8@rz.uni-karlsruhe.de>
 
 	Initial automake setup.

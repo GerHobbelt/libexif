@@ -1,10 +1,10 @@
-SUBDIRS = m4m po libexif test doc binary
+SUBDIRS = m4m po libexif test doc binary contrib
 
 if SHIP_BINARIES
 README_W32_XDIST = README-Win32.txt
 endif
 
-EXTRA_DIST = @PACKAGE_TARNAME@.spec autogen.sh $(README_W32_XDIST)
+EXTRA_DIST = @PACKAGE_TARNAME@.spec $(README_W32_XDIST)
 
 pkgconfigdir = $(libdir)/pkgconfig
 

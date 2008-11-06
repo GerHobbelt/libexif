@@ -1,7 +1,7 @@
 /*! \file exif-data.h
- * \brief FIXME foo bar blah
+ * \brief Defines the ExifData type and the associated functions.
  *
- * \author Lutz Müller <lutz@users.sourceforge.net>
+ * \author Lutz Mueller <lutz@users.sourceforge.net>
  * \date 2001-2005
  *
  * This library is free software; you can redistribute it and/or
@@ -55,8 +55,6 @@ ExifData *exif_data_new_mem       (ExifMem *);
 
 /*! \brief load exif data from file
  *  \param[in] path filename including path
- *  
- *  Foo bar blah bleh baz.
  */
 ExifData *exif_data_new_from_file (const char *path);
 ExifData *exif_data_new_from_data (const unsigned char *data,
@@ -100,7 +98,7 @@ ExifDataType exif_data_get_data_type (ExifData *);
 void exif_data_dump (ExifData *data);
 void exif_data_log  (ExifData *data, ExifLog *log);
 
-/* For your convenience */
+/** convenience macro. */
 #define exif_data_get_entry(d,t)					\
 	(exif_content_get_entry(d->ifd[EXIF_IFD_0],t) ?			\
 	 exif_content_get_entry(d->ifd[EXIF_IFD_0],t) :			\

@@ -31,9 +31,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = test-mem$(EXEEXT) test-value$(EXEEXT) test-integers$(EXEEXT)
+TESTS = test-mem$(EXEEXT) test-value$(EXEEXT) test-integers$(EXEEXT) \
+	test-parse$(EXEEXT)
 check_PROGRAMS = test-mem$(EXEEXT) test-mnote$(EXEEXT) \
-	test-value$(EXEEXT) test-integers$(EXEEXT)
+	test-value$(EXEEXT) test-integers$(EXEEXT) test-parse$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -64,6 +65,10 @@ test_mnote_SOURCES = test-mnote.c
 test_mnote_OBJECTS = test-mnote.$(OBJEXT)
 test_mnote_DEPENDENCIES = $(top_builddir)/libexif/libexif.la \
 	$(am__DEPENDENCIES_1)
+test_parse_SOURCES = test-parse.c
+test_parse_OBJECTS = test-parse.$(OBJEXT)
+test_parse_DEPENDENCIES = $(top_builddir)/libexif/libexif.la \
+	$(am__DEPENDENCIES_1)
 test_value_SOURCES = test-value.c
 test_value_OBJECTS = test-value.$(OBJEXT)
 test_value_DEPENDENCIES = $(top_builddir)/libexif/libexif.la \
@@ -80,8 +85,10 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = test-integers.c test-mem.c test-mnote.c test-value.c
-DIST_SOURCES = test-integers.c test-mem.c test-mnote.c test-value.c
+SOURCES = test-integers.c test-mem.c test-mnote.c test-parse.c \
+	test-value.c
+DIST_SOURCES = test-integers.c test-mem.c test-mnote.c test-parse.c \
+	test-value.c
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -229,9 +236,11 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = nls
+TEST_IMAGES = $(top_srcdir)/daniel-andrews-sample.jpg
 test_mem_LDADD = $(top_builddir)/libexif/libexif.la $(LTLIBINTL)
 test_mnote_LDADD = $(top_builddir)/libexif/libexif.la $(LTLIBINTL)
 test_value_LDADD = $(top_builddir)/libexif/libexif.la $(LTLIBINTL)
+test_parse_LDADD = $(top_builddir)/libexif/libexif.la $(LTLIBINTL)
 all: all-recursive
 
 .SUFFIXES:
@@ -281,6 +290,9 @@ test-mem$(EXEEXT): $(test_mem_OBJECTS) $(test_mem_DEPENDENCIES)
 test-mnote$(EXEEXT): $(test_mnote_OBJECTS) $(test_mnote_DEPENDENCIES) 
 	@rm -f test-mnote$(EXEEXT)
 	$(LINK) $(test_mnote_OBJECTS) $(test_mnote_LDADD) $(LIBS)
+test-parse$(EXEEXT): $(test_parse_OBJECTS) $(test_parse_DEPENDENCIES) 
+	@rm -f test-parse$(EXEEXT)
+	$(LINK) $(test_parse_OBJECTS) $(test_parse_LDADD) $(LIBS)
 test-value$(EXEEXT): $(test_value_OBJECTS) $(test_value_DEPENDENCIES) 
 	@rm -f test-value$(EXEEXT)
 	$(LINK) $(test_value_OBJECTS) $(test_value_LDADD) $(LIBS)
@@ -294,6 +306,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-integers.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-mem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-mnote.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-parse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-value.Po@am__quote@
 
 .c.o:
@@ -678,6 +691,7 @@ uninstall-am:
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-recursive uninstall uninstall-am
 
+export TEST_IMAGES
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

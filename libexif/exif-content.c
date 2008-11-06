@@ -1,6 +1,6 @@
 /* exif-content.c
  *
- * Copyright © 2001 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2001 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 #include <config.h>
 
 #include <libexif/exif-content.h>
+#include <libexif/exif-system.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -156,6 +157,7 @@ void
 exif_content_remove_entry (ExifContent *c, ExifEntry *e)
 {
 	unsigned int i;
+	ExifEntry **t, *temp;
 
 	if (!c || !c->priv || !e || (e->parent != c)) return;
 
@@ -164,13 +166,26 @@ exif_content_remove_entry (ExifContent *c, ExifEntry *e)
 	if (i == c->count) return;
 
 	/* Remove the entry */
-	memmove (&c->entries[i], &c->entries[i + 1],
-		 sizeof (ExifEntry*) * (c->count - i - 1));
-	c->count--;
+	temp = c->entries[c->count-1];
+	if (c->count > 1) {
+		t = exif_mem_realloc (c->priv->mem, c->entries,
+					sizeof(ExifEntry*) * (c->count - 1));
+		if (!t) {
+			return;
+		}
+		c->entries = t;
+		c->count--;
+		if (i != c->count) { /* we deallocated the last slot already */ 
+			memmove (&t[i], &t[i + 1], sizeof (ExifEntry*) * (c->count - i - 1));
+			t[c->count-1] = temp;
+		} 
+	} else {
+		exif_mem_free (c->priv->mem, c->entries);
+		c->entries = NULL;
+		c->count = 0;
+	}
 	e->parent = NULL;
 	exif_entry_unref (e);
-	c->entries = exif_mem_realloc (c->priv->mem, c->entries,
-					sizeof(ExifEntry*) * c->count);
 }
 
 ExifEntry *
@@ -226,7 +241,7 @@ exif_content_get_ifd (ExifContent *c)
 }
 
 static void
-fix_func (ExifEntry *e, void *data)
+fix_func (ExifEntry *e, void *UNUSED(data))
 {
 	exif_entry_fix (e);
 }
@@ -266,7 +281,7 @@ exif_content_fix (ExifContent *c)
 			e = exif_content_get_entry (c, t);
 			if (!e) break;
 			exif_log (c->priv->log, EXIF_LOG_CODE_DEBUG, "exif-content",
-					"Tag '%s' is not recoreded in IFD '%s' and has therefore been "
+					"Tag '%s' is not recorded in IFD '%s' and has therefore been "
 					"removed.", exif_tag_get_name_in_ifd (t, ifd),
 					exif_ifd_get_name (ifd));
 			exif_content_remove_entry (c, e);

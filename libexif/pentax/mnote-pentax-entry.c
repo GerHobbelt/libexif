@@ -1,6 +1,6 @@
 /* mnote-pentax-entry.c
  *
- * Copyright © 2002 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2002 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -65,13 +65,14 @@
 	}                                                               \
 }
 
-static struct {
+static const struct {
 	ExifTag tag;
 	struct {
 		int index;
 		const char *string;
 	} elem[33];
 } items[] = {
+#ifndef NO_VERBOSE_TAG_DATA
   { MNOTE_PENTAX_TAG_MODE,
     { {0, N_("Auto")},
       {1, N_("Night-scene")},
@@ -259,22 +260,25 @@ static struct {
     { {0, N_("Off")},
       {1, N_("On")},
       {0, NULL}}},
+#endif
   {0, {{0, NULL}}}
 };
 
 /* Two-component values */
-static struct {
+static const struct {
 	ExifTag tag;
 	struct {
 		int index1, index2;
 		const char *string;
 	} elem[39];
 } items2[] = {
+#ifndef NO_VERBOSE_TAG_DATA
   { MNOTE_PENTAX2_TAG_IMAGE_SIZE,
     { {0, 0, "2304x1728"},
       {4, 0, "1600x1200"},
       {5, 0, "2048x1536"},
       {8, 0, "2560x1920"},
+      {34, 0, "1536x1024"},
       {36, 0, N_("3008x2008 or 3040x2024")},
       {37, 0, "3008x2000"},
       {35, 1, "2400x1600"},
@@ -296,6 +300,7 @@ static struct {
       {5,   2, N_("Portrait")},
       {6,   2, N_("Landscape")},
       {0,   0, NULL}}},
+#endif
   {0, {{0, 0, NULL}}}
 };
 
@@ -341,7 +346,8 @@ mnote_pentax_entry_get_value (MnotePentaxEntry *entry,
 			/* search the tag */
 			for (i = 0; (items[i].tag && items[i].tag != entry->tag); i++);
 			if (!items[i].tag) {
-			  	strncpy (val, _("Internal error"), maxlen);
+				snprintf (val, maxlen,
+					  _("Internal error (unknown value %i)"), vs);
 			  	break;
 			}
 
@@ -353,7 +359,7 @@ mnote_pentax_entry_get_value (MnotePentaxEntry *entry,
 					  _("Internal error (unknown value %i)"), vs);
 				break;
 			}
-			strncpy (val, items[i].elem[j].string, maxlen);
+			strncpy (val, _(items[i].elem[j].string), maxlen);
 		} else {
 			/* Two-component values */
 			CF (entry->format, EXIF_FORMAT_SHORT, val, maxlen);
@@ -364,7 +370,8 @@ mnote_pentax_entry_get_value (MnotePentaxEntry *entry,
 			/* search the tag */
 			for (i = 0; (items2[i].tag && items2[i].tag != entry->tag); i++);
 			if (!items2[i].tag) {
-			  	strncpy (val, _("Internal error"), maxlen);
+				snprintf (val, maxlen,
+					  _("Internal error (unknown value %i %i)"), vs, vs2);
 			  	break;
 			}
 
@@ -376,7 +383,7 @@ mnote_pentax_entry_get_value (MnotePentaxEntry *entry,
 					  _("Internal error (unknown value %i %i)"), vs, vs2);
 				break;
 			}
-			strncpy (val, items2[i].elem[j].string, maxlen);
+			strncpy (val, _(items2[i].elem[j].string), maxlen);
 		}
 		break;
 

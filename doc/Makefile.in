@@ -219,10 +219,6 @@ DOXYGEN_UNINSTALL_TARGETS = $(am__append_8) $(am__append_10)
 DOXYGEN_CLEAN_TARGETS = $(am__append_11)
 DOXYGEN_TARBALLS = $(am__append_3) $(am__append_6)
 
-# Directory names used while installing
-@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@DOC_APIDOC_HTML = api.html
-@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@DOC_APIDOC_INTERNALS_HTML = internals.html
-
 ########################################################################
 # Common part
 ########################################################################
@@ -423,8 +419,9 @@ uninstall-am: uninstall-docDATA uninstall-local
 	uninstall-docDATA uninstall-local
 
 
-# FIXME: Depending on the source files would be sufficient.
-#        Depending on libexif.la works at least, however.
+# FIXME: Depending on the source files would be sufficient, but only
+#        maintainable with a completely non-recursive build.
+#        Depending on libexif.la works at least.
 $(top_builddir)/libexif/libexif.la:
 	cd $(top_builddir)/libexif && $(MAKE) libexif.la
 @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_DIR).stamp: Doxyfile $(top_builddir)/libexif/libexif.la
@@ -438,17 +435,23 @@ $(top_builddir)/libexif/libexif.la:
 @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@$(HTML_APIDOC_INTERNALS_DIR).tar.gz: $(HTML_APIDOC_INTERNALS_DIR).stamp
 @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	(cd $(DOXYGEN_OUTPUT_DIR) && $(AMTAR) chof - $(HTML_APIDOC_INTERNALS_DIR) | GZIP=--best gzip -c) > $@
 @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@install-apidocs-internals: $(HTML_APIDOC_INTERNALS_DIR).stamp
-@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0755 -d $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)
-@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0644 $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)/* $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)/
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	mkdir -p "$(DESTDIR)$(docdir)"
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	find "$(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_INTERNALS_DIR)" \
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type d -exec chmod 0755 {} \; \) -or \
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type f -exec chmod 0644 {} \; \)
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	(unset CDPATH; cd "$(DOXYGEN_OUTPUT_DIR)" && tar cpf - "$(HTML_APIDOC_INTERNALS_DIR)") \
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		| (cd "$(DESTDIR)$(docdir)" && tar xpf -)
 @BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@uninstall-apidocs-internals:
-@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	cd "$(DESTDIR)$(docdir)" && rm -f $(DOC_APIDOC_INTERNALS_HTML)/*
-@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rmdir $(DESTDIR)$(docdir)/$(DOC_APIDOC_INTERNALS_HTML)
+@BUILD_DOCS_TRUE@@ENABLE_INTERNAL_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -rf "$(DESTDIR)$(docdir)/$(HTML_APIDOC_INTERNALS_DIR)"
 @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@install-apidocs: $(HTML_APIDOC_DIR).stamp
-@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0755 -d $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)
-@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	$(INSTALL) -m 0644 $(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)/* $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)/
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	mkdir -p "$(DESTDIR)$(docdir)"
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	find "$(DOXYGEN_OUTPUT_DIR)/$(HTML_APIDOC_DIR)" \
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type d -exec chmod 0755 {} \; \) -or \
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		\( -type f -exec chmod 0644 {} \; \)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	(unset CDPATH; cd "$(DOXYGEN_OUTPUT_DIR)" && tar cpf - "$(HTML_APIDOC_DIR)") \
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@		| (cd "$(DESTDIR)$(docdir)" && tar xpf -)
 @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@uninstall-apidocs:
-@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	cd "$(DESTDIR)$(docdir)" && rm -f $(DOC_APIDOC_HTML)/*
-@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rmdir $(DESTDIR)$(docdir)/$(DOC_APIDOC_HTML)
+@BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -rf "$(DESTDIR)$(docdir)/$(HTML_APIDOC_DIR)"
 @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@clean-apidocs:
 @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -rf $(DOXYGEN_OUTPUT_DIR)
 @BUILD_DOCS_TRUE@@HAVE_DOXYGEN_TRUE@	rm -f $(HTML_APIDOC_DIR).tar.gz $(HTML_APIDOC_INTERNALS_DIR).tar.gz

@@ -1,5 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([EXIF library], [0.6.16], [libexif-devel@lists.sourceforge.net], [libexif])
+AC_INIT([EXIF library], [0.6.17], [libexif-devel@lists.sourceforge.net], [libexif])
 AC_CONFIG_SRCDIR([libexif/exif-data.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([auto-m4])
@@ -50,9 +50,10 @@ dnl C:A:R
 dnl 12:0:1   0.6.13
 dnl 13:1:0   added EXIF_DATA_OPTION_DONT_CHANGE_MAKER_NOTE (for 0.6.14)
 dnl 14:2:0   added XP_ WinXP tags (for 0.6.15)
-LIBEXIF_AGE=2
-LIBEXIF_REVISION=0
+dnl 14:2:1   0.6.17
 LIBEXIF_CURRENT=14
+LIBEXIF_AGE=2
+LIBEXIF_REVISION=1
 AC_SUBST([LIBEXIF_AGE])
 AC_SUBST([LIBEXIF_REVISION])
 AC_SUBST([LIBEXIF_CURRENT])
@@ -152,20 +153,14 @@ AM_CONDITIONAL([ENABLE_INTERNAL_DOCS], [test "x${set_enable_internal_docs}" = "x
 # ---------------------------------------------------------------------------
 # i18n support
 # ---------------------------------------------------------------------------
-ALL_LINGUAS="cs de es fr pl ru sk vi"
+ALL_LINGUAS="cs de en_CA es fr nl pl ru sk sv vi"
+AM_PO_SUBDIRS
 GP_GETTEXT_HACK([${PACKAGE}-${LIBEXIF_CURRENT_MIN}],
                 [Lutz Mueller and others])
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
-AM_PO_SUBDIRS()
 AM_ICONV()
 GP_GETTEXT_FLAGS()
-
-dnl We cannot use AC_DEFINE_UNQUOTED() for these definitions, as
-dnl we require make to do insert the proper $(datadir) value
-localedir="\$(datadir)/locale"
-AC_SUBST(localedir)
-AM_CPPFLAGS="$AM_CPPFLAGS -DLOCALEDIR=\\\"${localedir}\\\""
 
 
 dnl ---------------------------------------------------------------------------
@@ -190,14 +185,10 @@ AC_SUBST(AM_LDFLAGS)
 dnl ---------------------------------------------------------------------------
 dnl Output files
 dnl ---------------------------------------------------------------------------
-AC_CONFIG_FILES([ 
-  po/Makefile.in
+AC_CONFIG_FILES([  po/Makefile.in
   Makefile
   libexif.spec
   libexif/Makefile
-  libexif/canon/Makefile
-  libexif/olympus/Makefile
-  libexif/pentax/Makefile
   test/Makefile
   test/nls/Makefile
   m4m/Makefile
@@ -207,6 +198,7 @@ AC_CONFIG_FILES([
   libexif.pc
   libexif-uninstalled.pc
   binary/Makefile
+  contrib/Makefile
 ])
 AC_OUTPUT
 

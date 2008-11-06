@@ -1,6 +1,6 @@
 /* mnote-pentax-tag.c:
  *
- * Copyright © 2002 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2002 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,12 +25,13 @@
 
 #include <libexif/i18n.h>
 
-static struct {
+static const struct {
 	MnotePentaxTag tag;
 	const char *name;
 	const char *title;
 	const char *description;
 } table[] = {
+#ifndef NO_VERBOSE_TAG_STRINGS
 	{MNOTE_PENTAX_TAG_MODE, "Mode", N_("Capture Mode"), ""},
 	{MNOTE_PENTAX_TAG_QUALITY, "Quality", N_("Quality Level"), ""},
 	{MNOTE_PENTAX_TAG_FOCUS, "Focus", N_("Focus Mode"), ""},
@@ -70,6 +71,7 @@ static struct {
 	{MNOTE_CASIO2_TAG_OBJECT_DISTANCE, "ObjectDistance", N_("Object Distance"), N_("Distance of photographed object in millimeters.")},
 	{MNOTE_CASIO2_TAG_TIME_ZONE, "TimeZone", N_("Time Zone"), ""},
 	{MNOTE_CASIO2_TAG_BESTSHOT_MODE, "BestshotMode", N_("Bestshot mode"), ""},
+#endif
 	{0, NULL, NULL, NULL}
 };
 
@@ -101,6 +103,10 @@ mnote_pentax_tag_get_description (MnotePentaxTag t)
 
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	for (i = 0; i < sizeof (table) / sizeof (table[0]); i++)
-		if (table[i].tag == t) return (_(table[i].description));
+		if (table[i].tag == t) {
+			if (!table[i].description || !*table[i].description)
+				return "";
+			return (_(table[i].description));
+		}
 	return NULL;
 }

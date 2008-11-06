@@ -1,6 +1,6 @@
 /* exif-tag.c
  *
- * Copyright © 2001 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2001 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,15 +38,16 @@
 #define ESL_NNNO { EXIF_SUPPORT_LEVEL_NOT_RECORDED, EXIF_SUPPORT_LEVEL_NOT_RECORDED, EXIF_SUPPORT_LEVEL_NOT_RECORDED, EXIF_SUPPORT_LEVEL_OPTIONAL }
 #define ESL_GPS { ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_OOOO, ESL_NNNN }
 
-static struct {
+static const struct {
 	ExifTag tag;
 	const char *name;
 	const char *title;
 	const char *description;
 	ExifSupportLevel esl[EXIF_IFD_COUNT][4];
 } ExifTagTable[] = {
+#ifndef NO_VERBOSE_TAG_STRINGS
 	{EXIF_TAG_NEW_SUBFILE_TYPE, "NewSubfileType",
-	 "New Subfile Type", N_("A general indication of the kind of data "
+	 N_("New Subfile Type"), N_("A general indication of the kind of data "
 	    "contained in this subfile.")},
 	{EXIF_TAG_INTEROPERABILITY_INDEX, "InteroperabilityIndex",
 	 "InteroperabilityIndex",
@@ -185,13 +186,13 @@ static struct {
 	{EXIF_TAG_WHITE_POINT, "WhitePoint", N_("White Point"),
 	 N_("The chromaticity of the white point of the image. Normally "
 	    "this tag is not necessary, since color space is specified "
-	    "in the colorspace information tag (<ColorSpace>)."),
+	    "in the color space information tag (<ColorSpace>)."),
 	 { ESL_OOOO, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_PRIMARY_CHROMATICITIES, "PrimaryChromaticities",
 	 N_("Primary Chromaticities"),
 	 N_("The chromaticity of the three primary colors of the image. "
-	    "Normally this tag is not necessary, since colorspace is "
-	    "specified in the colorspace information tag (<ColorSpace>)."),
+	    "Normally this tag is not necessary, since color space is "
+	    "specified in the color space information tag (<ColorSpace>)."),
 	 { ESL_OOOO, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_TRANSFER_RANGE, "TransferRange", N_("Transfer Range"), ""},
 	{EXIF_TAG_SUB_IFDS, "SubIFDs", "SubIFD Offsets", N_("Defined by Adobe Corporation "
@@ -307,7 +308,7 @@ static struct {
 	 { ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_INTER_COLOR_PROFILE, "InterColorProfile",
 	 "InterColorProfile", ""},
-	{EXIF_TAG_EXPOSURE_PROGRAM, "ExposureProgram", "ExposureProgram",
+	{EXIF_TAG_EXPOSURE_PROGRAM, "ExposureProgram", N_("Exposure Program"),
 	 N_("The class of the program used by the camera to set exposure "
 	    "when the picture is taken."),
 	 { ESL_NNNN, ESL_NNNN, ESL_OOOO, ESL_NNNN, ESL_NNNN } },
@@ -356,21 +357,27 @@ static struct {
 	{EXIF_TAG_GPS_ALTITUDE_REF, "GPSAltitudeRef", N_("Altitude reference"),
 	 N_("Indicates the altitude used as the reference altitude. If the "
 	    "reference is sea level and the altitude is above sea level, 0 "
-			"is given. If the altitude is below sea level, a value of 1 is given "
-			"and the altitude is indicated as an absolute value in the "
-			"GSPAltitude tag. The reference unit is meters. Note that this tag "
-			"is BYTE type, unlike other reference tags."), ESL_GPS},
+	    "is given. If the altitude is below sea level, a value of 1 is given "
+	    "and the altitude is indicated as an absolute value in the "
+	    "GSPAltitude tag. The reference unit is meters. Note that this tag "
+	    "is BYTE type, unlike other reference tags."), ESL_GPS},
 	{EXIF_TAG_GPS_ALTITUDE, "GPSAltitude", N_("Altitude"),
 	 N_("Indicates the altitude based on the reference in GPSAltitudeRef. "
-			"Altitude is expressed as one RATIONAL value. The reference unit "
-			"is meters."), ESL_GPS},
+	    "Altitude is expressed as one RATIONAL value. The reference unit "
+	    "is meters."), ESL_GPS},
+	{EXIF_TAG_GPS_IMG_DIRECTION_REF, "GPSImgDirectionRef", N_("GPS Img Direction Reference"),
+	 N_("Indicates the reference for giving the direction of the image when it is captured. "
+	    "'T' denotes true direction and 'M' is magnetic direction."), ESL_GPS},
+	{EXIF_TAG_GPS_IMG_DIRECTION, "GPSImgDirection", N_("GPS Img Direction"),
+	 N_("Indicates the direction of the image when it was captured. The range of values is "
+	    "from 0.00 to 359.99."), ESL_GPS},
 	{EXIF_TAG_ISO_SPEED_RATINGS, "ISOSpeedRatings",
 	 N_("ISO Speed Ratings"),
 	 N_("Indicates the ISO Speed and ISO Latitude of the camera or "
 	    "input device as specified in ISO 12232."),
 	 { ESL_NNNN, ESL_NNNN, ESL_OOOO, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_OECF, "OECF", "OECF",
-	 N_("Indicates the Opto-Electoric Conversion Function (OECF) "
+	 N_("Indicates the Opto-Electronic Conversion Function (OECF) "
 	    "specified in ISO 14524. <OECF> is the relationship between "
 	    "the camera optical input and the image values."),
 	 { ESL_NNNN, ESL_NNNN, ESL_OOOO, ESL_NNNN, ESL_NNNN } },
@@ -389,7 +396,7 @@ static struct {
 	 N_("The date and time when the image was stored as digital data. "),
 	 { ESL_NNNN, ESL_NNNN, ESL_OOOO, ESL_NNNN, ESL_NNNN } },
 	{EXIF_TAG_COMPONENTS_CONFIGURATION, "ComponentsConfiguration",
-	 "ComponentsConfiguration",
+	 N_("Components Configuration"),
 	 N_("Information specific to compressed data. The channels of "
 	    "each component are arranged in order from the 1st "
 	    "component to the 4th. For uncompressed data the data "
@@ -457,7 +464,7 @@ static struct {
 	    "with NULL (\"00.h\"). ID codes are assigned by means of "
 	    "registration. The designation method and references for each "
 	    "character code are given in Table 6. The value of CountN "
-	    "is determinated based on the 8 bytes in the character code "
+	    "is determined based on the 8 bytes in the character code "
 	    "area and the number of bytes in the user comment part. Since "
 	    "the TYPE is not ASCII, NULL termination is not necessary "
 	    "(see Fig. 9). "
@@ -599,7 +606,7 @@ static struct {
 	    "processing as per the <Rotation> tag. The first value "
 	    "indicates the X column number and the second indicates "
 	    "the Y row number.")},
-	{EXIF_TAG_EXPOSURE_INDEX, "ExposureIndex", N_("Exposure index"),
+	{EXIF_TAG_EXPOSURE_INDEX, "ExposureIndex", N_("Exposure Index"),
 	 N_("Indicates the exposure index selected on the camera or "
 	    "input device at the time the image is captured.")},
 	{EXIF_TAG_SENSING_METHOD, "SensingMethod", N_("Sensing Method"),
@@ -678,8 +685,9 @@ static struct {
 	    "to hexadecimal notation and 128-bit fixed length.")},
 	{EXIF_TAG_GAMMA, "Gamma", N_("Gamma"),
 	 N_("Indicates the value of coefficient gamma.")},
-	{EXIF_TAG_UNKNOWN_C4A5, "UnknownC4A5", N_("Unknown"),
-	 N_("Unknown (related to Epson's PRINT Image Matching technology)")},
+	{EXIF_TAG_PRINT_IMAGE_MATCHING, "PrintImageMatching", N_("PRINT Image Matching"),
+	 N_("Related to Epson's PRINT Image Matching technology")},
+#endif
 	{0, NULL, NULL, NULL}
 };
 
@@ -736,7 +744,6 @@ exif_tag_get_title_in_ifd (ExifTag tag, ExifIfd ifd)
 	 * bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	 */
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
-
 	if (ifd >= EXIF_IFD_COUNT) return NULL;
 	for (i = 0; ExifTagTable[i].title; i++)
 		if ((ExifTagTable[i].tag == tag) && RECORDED) break;
@@ -758,8 +765,13 @@ exif_tag_get_description_in_ifd (ExifTag tag, ExifIfd ifd)
 
 	if (ifd >= EXIF_IFD_COUNT) return NULL;
 	for (i = 0; ExifTagTable[i].description; i++)
-		if ((ExifTagTable[i].tag == tag) && RECORDED) break;
-	return _(ExifTagTable[i].description);
+		if ((ExifTagTable[i].tag == tag) && RECORDED) {
+			/* GNU gettext acts strangely when given an empty string */
+			if (!*ExifTagTable[i].description)
+				return "";
+			return _(ExifTagTable[i].description);
+		}
+	return NULL;
 }
 
 
@@ -773,7 +785,7 @@ typedef const char * (*get_stuff_func) (ExifTag tag, ExifIfd ifd);
 static const char *
 exif_tag_get_stuff (ExifTag tag, get_stuff_func func)
 {
-	const static ExifIfd ifds[5] = {
+	static const ExifIfd ifds[5] = {
 		EXIF_IFD_0,
 		EXIF_IFD_1,
 		EXIF_IFD_EXIF,
@@ -815,12 +827,16 @@ ExifTag
 exif_tag_from_name (const char *name)
 {
 	unsigned int i;
+	unsigned int result=0;
 
 	if (!name) return 0;
 
 	for (i = 0; ExifTagTable[i].name; i++)
-		if (!strcmp (ExifTagTable[i].name, name)) break;
-	return ExifTagTable[i].tag;
+		if (!strcmp (ExifTagTable[i].name, name))  {
+		  	result = ExifTagTable[i].tag;
+		  	break;
+		}
+	return result;
 }
 
 ExifSupportLevel

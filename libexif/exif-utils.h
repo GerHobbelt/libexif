@@ -1,6 +1,6 @@
 /* exif-utils.h
  *
- * Copyright © 2001 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2001 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,9 +39,14 @@ typedef char *		ExifAscii;
 typedef uint16_t	ExifShort;         /* 2 bytes */
 typedef int16_t         ExifSShort;        /* 2 bytes */
 typedef uint32_t	ExifLong;          /* 4 bytes */
+
+/** EXIF Unsigned Rational */
 typedef struct {ExifLong numerator; ExifLong denominator;} ExifRational;
+
 typedef char		ExifUndefined;     /* 1 byte  */
 typedef int32_t		ExifSLong;         /* 4 bytes */
+
+/** EXIF Signed Rational. */
 typedef struct {ExifSLong numerator; ExifSLong denominator;} ExifSRational;
 
 

@@ -1,6 +1,6 @@
 /* exif-loader.c
  *
- * Copyright © 2002 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2002 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,17 @@
 #include <libexif/exif-utils.h>
 #include <libexif/i18n.h>
 
+#include <sys/types.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
+#undef JPEG_MARKER_DHT
+#define JPEG_MARKER_DHT  0xc4
 #undef JPEG_MARKER_SOI
 #define JPEG_MARKER_SOI  0xd8
+#undef JPEG_MARKER_DQT
+#define JPEG_MARKER_DQT  0xdb
 #undef JPEG_MARKER_APP0
 #define JPEG_MARKER_APP0 0xe0
 #undef JPEG_MARKER_APP1
@@ -176,6 +181,8 @@ exif_loader_write (ExifLoader *eld, unsigned char *buf, unsigned int len)
 		break;
 	}
 
+	if (!len)
+		return 1;
 	exif_log (eld->log, EXIF_LOG_CODE_DEBUG, "ExifLoader",
 		  "Scanning %i byte(s) of data...", len);
 
@@ -263,7 +270,7 @@ exif_loader_write (ExifLoader *eld, unsigned char *buf, unsigned int len)
 		default:
 			switch (eld->b[i]) {
 			case JPEG_MARKER_APP1:
-				if (!memcmp (eld->b + i + 3, ExifHeader, MIN(sizeof (ExifHeader), MAX(0, sizeof (eld->b) - i - 3)))) {
+			  if (!memcmp (eld->b + i + 3, ExifHeader, MIN((ssize_t)(sizeof(ExifHeader)), MAX(0, ((ssize_t)(sizeof(eld->b))) - ((ssize_t)i) - 3)))) {
 					eld->data_format = EL_DATA_FORMAT_EXIF;
 				} else {
 					eld->data_format = EL_DATA_FORMAT_JPEG; /* Probably JFIF - keep searching for APP1 EXIF*/
@@ -271,6 +278,8 @@ exif_loader_write (ExifLoader *eld, unsigned char *buf, unsigned int len)
 				eld->size = 0;
 				eld->state = EL_READ_SIZE_BYTE_08;
 				break;
+			case JPEG_MARKER_DHT:
+			case JPEG_MARKER_DQT:
 			case JPEG_MARKER_APP0:
 			case JPEG_MARKER_APP2:
 			case JPEG_MARKER_APP13:
@@ -348,6 +357,7 @@ exif_loader_free (ExifLoader *loader)
 
 	mem = loader->mem;
 	exif_loader_reset (loader);
+	exif_log_unref (loader->log);
 	exif_mem_free (mem, loader);
 	exif_mem_unref (mem);
 }
@@ -379,7 +389,8 @@ exif_loader_get_data (ExifLoader *loader)
 {
 	ExifData *ed;
 
-	if (!loader) 
+	if (!loader || (loader->data_format == EL_DATA_FORMAT_UNKNOWN) ||
+	    !loader->bytes_read)
 		return NULL;
 
 	ed = exif_data_new_mem (loader->mem);

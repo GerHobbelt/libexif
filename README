@@ -14,13 +14,15 @@ FEATURES
 
 libexif supports parsing, editing and saving of EXIF data. In addition, it
 has gettext support. All EXIF tags described in EXIF standard 2.1
-are supported.
+are supported.  Many maker notes from Canon, Casio, Fuji, Nikon, Olympus,
+Pentax and Sanyo cameras are also supported.
 
 
 REQUIREMENTS
 ------------
 
 libexif is written in plain C and does not require any additional library.
+GNU gettext will be used for language translation, if available.
 
 
 LIMITATIONS
@@ -77,12 +79,68 @@ I know of the following libraries that use or have been inspired by libexif:
  - pel: PHP-Code (http://pel.sourceforge.net)
 
 
+BUILDING
+--------
+
+It really depends on your environment what to do in order to get libexif
+to build. Building from the source tar ball usually involves the commands:
+
+  ./configure
+  make
+  sudo make install
+
+When building from source out of CVS, something like the following will be
+necessary:
+
+  gettextize
+  mv po/Makevars.template po/Makevars
+  aclocal -I auto-m4 -I m4m
+  autoheader
+  libtoolize --force
+  automake --add-missing
+  autoconf
+  ./configure
+  make
+
+Besides the standard arguments, configure takes several specific to libexif:
+
+  --disable-docs          To disable producing any documentation
+  --enable-internal-docs  Build internal code docs if Doxygen available
+  --enable-ship-binaries  To include Windows DLLs in 'make dist'
+
+Certain specialized applications can reduce the size of the libexif
+binary by setting one or both of the following macros in the CPPFLAGS
+environment variable at configure time.  Each one removes certain kinds of
+text strings from the binary.  Applications which need to access specific,
+known EXIF tags and know in advance the meaning of their data have no need
+of those strings and can save considerable space by eliminating them.
+
+ -DNO_VERBOSE_TAG_STRINGS Names and descriptions of EXIF tags, & debug messages
+ -DNO_VERBOSE_TAG_DATA    Names of enumerated tag data contents
+
+
+INTERNATIONALIZATION
+--------------------
+
+All translations for libexif, except cs, ru and en_CA, are coordinated by
+the Translation Project at http://translationproject.org/.  This means
+that ALL changes to the .po files (except those few exceptions) MUST be
+made through the TP web site, or they will be eventually overwritten
+and lost.  If you are interested in translating libexif into a new
+language, simply join TP and start!  A translation disclaimer is NOT
+required for libexif; by making a translation, you agree implicitly to
+provide it under the same license terms as the rest of libexif (LGPL).
+When a new version of libexif is available for translation, a libexif
+maintainer will contact the Translation Project and all interested TP
+members will be automatically notified.
+
+
 AUTHORS
 -------
 
 libexif has originally been written by Curtis Galloway
 <curtisg@users.sourceforge.net>. Because of the original design not
-supporting editing and saving, Lutz Müller <lutz@users.sourceforge.net>
+supporting editing and saving, Lutz Mueller <lutz@users.sourceforge.net>
 rewrote libexif from scratch.
 
 

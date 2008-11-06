@@ -1,6 +1,6 @@
 /* mnote-canon-tag.h
  *
- * Copyright © 2002 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2002 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,8 @@ enum _MnoteCanonTag {
 	MNOTE_CANON_TAG_UNKNOWN_10	= 0xa,
 	MNOTE_CANON_TAG_SERIAL_NUMBER	= 0xc,
 	MNOTE_CANON_TAG_UNKNOWN_13	= 0xd,
-	MNOTE_CANON_TAG_CUSTOM_FUNCS	= 0xf
+	MNOTE_CANON_TAG_CUSTOM_FUNCS	= 0xf,
+	MNOTE_CANON_TAG_COLOR_INFORMATION = 0xa0
 };
 typedef enum _MnoteCanonTag MnoteCanonTag;
 

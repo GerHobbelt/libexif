@@ -1,6 +1,6 @@
 /* mnote-canon-tag.c
  *
- * Copyright © 2002 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2002 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,12 +25,13 @@
 
 #include <libexif/i18n.h>
 
-static struct {
+static const struct {
 	MnoteCanonTag tag;
 	const char *name;
 	const char *title;
 	const char *description;
 } table[] = {
+#ifndef NO_VERBOSE_TAG_STRINGS
 	{MNOTE_CANON_TAG_SETTINGS_1, "Settings1", N_("Settings (first part)"), ""},
 	{MNOTE_CANON_TAG_FOCAL_LENGTH, "FocalLength", N_("Focal length"), ""},
 	{MNOTE_CANON_TAG_SETTINGS_2, "Settings2", N_("Settings (second part)"), ""},
@@ -39,22 +40,26 @@ static struct {
 	{MNOTE_CANON_TAG_FIRMWARE, "FirmwareVersion", N_("Firmware version"), ""},
 	{MNOTE_CANON_TAG_IMAGE_NUMBER, "ImageNumber", N_("Image number"), ""},
 	{MNOTE_CANON_TAG_OWNER, "OwnerName", N_("Owner name"), ""},
+	{MNOTE_CANON_TAG_COLOR_INFORMATION, "ColorInformation", N_("Color information"), ""},
 	{MNOTE_CANON_TAG_SERIAL_NUMBER, "SerialNumber", N_("Serial number"), ""},
 	{MNOTE_CANON_TAG_CUSTOM_FUNCS, "CustomFunctions", N_("Custom functions"), ""},
+#endif
 	{0, NULL, NULL, NULL}
 };
 
-static struct {
+static const struct {
 	MnoteCanonTag tag;
 	unsigned int subtag;
 	const char *name;
 } table_sub[] = {
+#ifndef NO_VERBOSE_TAG_STRINGS
 	{MNOTE_CANON_TAG_SETTINGS_1,  0, N_("Macro mode")},
 	{MNOTE_CANON_TAG_SETTINGS_1,  1, N_("Self-timer")},
 	{MNOTE_CANON_TAG_SETTINGS_1,  2, N_("Quality")},
 	{MNOTE_CANON_TAG_SETTINGS_1,  3, N_("Flash mode")},
 	{MNOTE_CANON_TAG_SETTINGS_1,  4, N_("Drive mode")},
 	{MNOTE_CANON_TAG_SETTINGS_1,  6, N_("Focus mode")},
+	{MNOTE_CANON_TAG_SETTINGS_1,  8, N_("Record mode")},
 	{MNOTE_CANON_TAG_SETTINGS_1,  9, N_("Image size")},
 	{MNOTE_CANON_TAG_SETTINGS_1, 10, N_("Easy shooting mode")},
 	{MNOTE_CANON_TAG_SETTINGS_1, 11, N_("Digital zoom")},
@@ -113,6 +118,11 @@ static struct {
 	{MNOTE_CANON_TAG_SETTINGS_2, 32, N_("Manual flash output")},
 	{MNOTE_CANON_TAG_PANORAMA, 2, N_("Panorama frame")},
 	{MNOTE_CANON_TAG_PANORAMA, 5, N_("Panorama direction")},
+	{MNOTE_CANON_TAG_COLOR_INFORMATION, 0, N_("Tone curve")},
+	{MNOTE_CANON_TAG_COLOR_INFORMATION, 2, N_("Sharpness frequency")},
+	{MNOTE_CANON_TAG_COLOR_INFORMATION, 7, N_("White balance")},
+	{MNOTE_CANON_TAG_COLOR_INFORMATION, 9, N_("Picture style")},
+#endif
 	{0, 0, NULL}
 };
 
@@ -182,6 +192,10 @@ mnote_canon_tag_get_description (MnoteCanonTag t)
 
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	for (i = 0; i < sizeof (table) / sizeof (table[0]); i++)
-		if (table[i].tag == t) return (_(table[i].description));
+		if (table[i].tag == t) {
+			if (!*table[i].description)
+				return "";
+			return (_(table[i].description));
+		}
 	return NULL;
 }

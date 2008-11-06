@@ -1,6 +1,6 @@
 /* exif-format.c
  *
- * Copyright © 2001 Lutz Müller <lutz@users.sourceforge.net>
+ * Copyright (c) 2001 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,7 @@
 
 #include <stdlib.h>
 
-static struct {
+static const struct {
         ExifFormat format;
 	const char *name;
         unsigned char size;
