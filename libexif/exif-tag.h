@@ -1,5 +1,7 @@
-/* exif-tag.h
- *
+/*! \file exif-tag.h
+ *  \brief Handling EXIF tags
+ */
+/*
  * Copyright (c) 2001 Lutz Mueller <lutz@users.sourceforge.net>
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +30,7 @@ extern "C" {
 #include <libexif/exif-ifd.h>
 #include <libexif/exif-data-type.h>
 
+/*! EXIF tags */
 typedef enum {
 	EXIF_TAG_INTEROPERABILITY_INDEX		= 0x0001,
 	EXIF_TAG_INTEROPERABILITY_VERSION	= 0x0002,
@@ -85,6 +88,7 @@ typedef enum {
 	EXIF_TAG_GPS_INFO_IFD_POINTER		= 0x8825,
 	EXIF_TAG_ISO_SPEED_RATINGS		= 0x8827,
 	EXIF_TAG_OECF				= 0x8828,
+	EXIF_TAG_TIME_ZONE_OFFSET		= 0x882a,
 	EXIF_TAG_EXIF_VERSION			= 0x9000,
 	EXIF_TAG_DATE_TIME_ORIGINAL		= 0x9003,
 	EXIF_TAG_DATE_TIME_DIGITIZED		= 0x9004,
@@ -179,26 +183,98 @@ typedef enum {
 #define EXIF_TAG_GPS_DATE_STAMP         0x001d
 #define EXIF_TAG_GPS_DIFFERENTIAL       0x001e
 
+/*! What level of support a tag enjoys in the EXIF standard */
 typedef enum {
+	/*! The meaning of this tag is unknown */
 	EXIF_SUPPORT_LEVEL_UNKNOWN = 0,
+
+	/*! This tag is not allowed in the given IFD */
 	EXIF_SUPPORT_LEVEL_NOT_RECORDED,
+
+	/*! This tag is mandatory in the given IFD */
 	EXIF_SUPPORT_LEVEL_MANDATORY,
+
+	/*! This tag is optional in the given IFD */
 	EXIF_SUPPORT_LEVEL_OPTIONAL
 } ExifSupportLevel;
 
-ExifTag          exif_tag_from_name                (const char *);
-const char      *exif_tag_get_name_in_ifd          (ExifTag, ExifIfd);
-const char      *exif_tag_get_title_in_ifd         (ExifTag, ExifIfd);
-const char      *exif_tag_get_description_in_ifd   (ExifTag, ExifIfd);
-ExifSupportLevel exif_tag_get_support_level_in_ifd (ExifTag, ExifIfd,
-                                                    ExifDataType);
+/*! Return the tag ID given its unique textual name.
+ *
+ * \param[in] name tag name
+ * \return tag ID
+ */
+ExifTag          exif_tag_from_name                (const char *name);
+
+/*! Return a textual name of the given tag when found in the given IFD. The
+ * name is a short, unique, non-localized text string containing only
+ * US-ASCII alphanumeric characters.
+ *
+ * \param[in] tag EXIF tag
+ * \param[in] ifd IFD
+ * \return textual name of the tag, or NULL if the tag is unknown
+ */
+const char      *exif_tag_get_name_in_ifd          (ExifTag tag, ExifIfd ifd);
+
+/*! Return a textual title of the given tag when found in the given IFD.
+ * The title is a short, localized description of the tag.
+ *
+ * \param[in] tag EXIF tag
+ * \param[in] ifd IFD
+ * \return textual title of the tag, or NULL if the tag is unknown
+ */
+const char      *exif_tag_get_title_in_ifd         (ExifTag tag, ExifIfd ifd);
+
+/*! Return a verbose textual description of the given tag when found in the
+ * given IFD. The description is a verbose, localized description of the tag.
+ *
+ * \param[in] tag EXIF tag
+ * \param[in] ifd IFD
+ * \return textual description of the tag, or NULL if the tag is unknown
+ */
+const char      *exif_tag_get_description_in_ifd   (ExifTag tag, ExifIfd ifd);
+
+/*! Return whether the given tag is mandatory or not in the given IFD and
+ * data type according to the EXIF specification. If the IFD given is
+ * EXIF_IFD_COUNT, the result is EXIF_SUPPORT_LEVEL_UNKNOWN. If the data
+ * type is EXIF_DATA_TYPE_UNKNOWN, the result is
+ * EXIF_SUPPORT_LEVEL_UNKNOWN unless the support level is the same for
+ * all data types.
+ *
+ * \param[in] tag EXIF tag
+ * \param[in] ifd IFD or EXIF_IFD_COUNT
+ * \param[in] t data type or EXIF_DATA_TYPE_UNKNOWN
+ * \return the level of support for this tag
+ */
+ExifSupportLevel exif_tag_get_support_level_in_ifd (ExifTag tag, ExifIfd ifd,
+                                                    ExifDataType t);
 
 /* Don't use these functions. They are here for compatibility only. */
+
+/*! \deprecated Use #exif_tag_get_name_in_ifd instead */
 const char     *exif_tag_get_name        (ExifTag tag);
+
+/*! \deprecated Use #exif_tag_get_title_in_ifd instead */
 const char     *exif_tag_get_title       (ExifTag tag);
+
+/*! \deprecated Use #exif_tag_get_description_in_ifd instead */
 const char     *exif_tag_get_description (ExifTag tag);
 
+
+/* For now, do not use these functions. */
+
+/*! \internal */
+ExifTag      exif_tag_table_get_tag  (unsigned int n);
+
+/*! \internal */
+const char  *exif_tag_table_get_name (unsigned int n);
+
+/*! \internal */
+unsigned int exif_tag_table_count    (void);
+
+
 /* Don't use these definitions. They are here for compatibility only. */
+
+/*! \deprecated Use EXIF_TAG_PRINT_IMAGE_MATCHING instead. */
 #define EXIF_TAG_UNKNOWN_C4A5 EXIF_TAG_PRINT_IMAGE_MATCHING
 
 #ifdef __cplusplus

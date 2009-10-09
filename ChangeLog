@@ -1,3 +1,225 @@
+2009-10-09  Dan Fandrich <dan@coneharvesters.com>
+
+	* Released 0.6.18
+
+2009-10-09  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/sr.po: Added Serbian translation by Marko Uskokovic
+	* po/pt_BR.po: Added Portuguese (Brazil) translation by André Gondi
+
+2009-10-08  Dan Fandrich <dan@coneharvesters.com>
+
+	* Demoted from EXIF_LOG_CODE_CORRUPT_DATA to EXIF_LOG_CODE_DEBUG the
+	  MakerNote log messages that would result if a MakerNote were
+	  rewritten by an application without rebasing the internal data
+	  offsets.  The exif front end (at least) aborts processing if
+	  such a log message is found, but these kinds of errors are
+	  far too common (and practically unavoidable) to handle them
+	  this way.
+
+2009-10-06  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added --enable-maintainer-mode in configure and made the SourceForge
+	  logo appear in the Doxygen documentation only when it's enabled.
+
+2009-10-05  Dan Fandrich <dan@coneharvesters.com>
+
+	* Updated translations from Translation Project members to the
+	  latest & hopefully final .pot file before release
+
+2009-10-01  Dan Fandrich <dan@coneharvesters.com>
+
+	* Bumped the library minor version number because of the addition
+	  of exif_loader_get_buf()
+	* Added exif.h to the source tarball so users can generate full
+	  Doxygen documentation.
+
+2009-09-30  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added a new public API function, exif_loader_get_buf(), which
+	  returns a pointer to the raw data in the ExifLoader. Without this,
+	  the only way to get the ExifLoader data out was as an
+	  ExifData and using only the default set of ExifDataOptions.
+
+2009-09-29  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added EXIF_DATA_TYPE_UNKNOWN as a backwards-compatible
+	  replacement for most uses of EXIF_DATA_TYPE_COUNT since that's
+	  a clearer name for how it's being used.
+
+2009-09-26  Dan Fandrich <dan@coneharvesters.com>
+
+	* libexif/exif-data.c: Added more error log messages and improved
+	  a few data boundary checks.
+	* Sped up exif_content_fix() considerably by splitting the one giant
+	  loop into two much smaller & faster loops.
+
+2009-09-24  Dan Fandrich <dan@coneharvesters.com>
+
+	* Fixed some problems in MakerNote parsing that could cause a
+	  read past the end of a buffer and therefore a segfault.
+	* Allow MakerNote parsing to continue even if one tag parses
+	  incorrectly.
+	* Log an error whenever memory allocation fails in MakerNote parsing.
+
+2009-09-23  Dan Fandrich <dan@coneharvesters.com>
+
+	* Removed bogus "APEX" value from shutter speed display (thanks to
+	  Jef Driesen for confirming this)
+	* Fixed a couple of off-by-one unnecessary string truncations
+	* Define M_PI for those systems that don't have it
+
+2009-09-23  Jan Patera <patera@users.sourceforge.net>
+
+	* po/cs.po: Updated Czech translation by Jan Patera
+
+2009-09-18  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added support for writing Pentax and Casio v2 MakerNotes
+	* Now displaying all components in Pentax and Casio v2 MakerNotes
+	  when a tag has more than one
+
+2009-09-18  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/de.po: Updated German translation by Marcus Meissner
+	* po/sv.po: Updated Swedish translation by Daniel Nylander
+	* po/vi.po: Updated Vietnamese translation by Clytie Siddall
+
+2009-09-17  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/pl.po: Updated Polish translation by Jakub Bogusz
+
+2009-09-16  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/en_CA.po: Updated Canadian English translation
+
+2009-08-12  Lutz Mueller <lutz@users.sourceforge.com>
+
+	Patch by Vladimir Petrov <vppetrov@mm-sol.com> plus some whitespace
+        fixes by myself:
+
+	* libexif/exif-entry.c: (exif_entry_[fix,get_value,initialize]): 
+          Support EXIF_TAG_ISO_SPEED_RATINGS.
+
+2009-06-15  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/da.po: Danish translation corrections by Lars Christian Jensen
+
+2009-06-03  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/da.po: Added Danish translation by Joe Hansen
+
+2009-05-28  Dan Fandrich <dan@coneharvesters.com>
+
+	* Fixed negative exposure values in Canon makernotes (bug #2797280)
+
+2009-05-02  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added contrib/examples/write-exif.c
+	* Create a valid default for EXIF_TAG_COMPONENTS_CONFIGURATION
+
+2009-03-21  Lutz Mueller <lutz@users.sourceforge.net>
+
+	Meder Kydyraliev <meder.k@gmail.com> suggested to add some sanity
+	checks:
+
+	* libexif/exif-data.c (exif_data_load_entry),
+	  (exif_data_load_data_thumbnail)
+	* libexif/canon/exif_mnote-data-canon.c
+          (exif_mnote_data_canon_load)
+	* libexif/fuji/exif-mnote-data-fuji.c
+	  (exif_mnote_data_fuji_load)
+	* libexif/olympus/exif-mnote-data-olympus.c
+          (exif_mnote_data_olympus_load)
+	* libexif/pentax/exif-mnote-data-pentax.c
+	  (exif_mnote_data_pentax_load)
+
+2009-03-16  Lutz Mueller <lutz@users.sourceforge.net>
+
+	* libexif/canon/exif-mnote-data-canon.c:
+          (exif_mnote_data_canon_load): Fix the coding style in this function
+	  to make it easier to read.
+
+2009-02-02  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added AC_C_INLINE to configure.ac to define the inline keyword
+	  if the compiler doesn't handle it already.
+
+2009-01-28  Dan Fandrich <dan@coneharvesters.com>
+
+	* Decode the value for EXIF_TAG_LIGHT_SOURCE and EXIF_TAG_SCENE_TYPE
+	* Split out the generic ExifEntry formatting code into a new function
+	  exif_entry_format_value()
+	* Fixed some signed vs unsigned formatting errors
+	* Format the EXIF_TAG_GPS_TIME_STAMP & EXIF_TAG_GPS_ALTITUDE_REF tags
+	* Improved the wrong data type fixup
+	* Separated the MNOTE_SANYO_TAG_SELFTIMER 2 sec. case from the other
+	  On/Off cases
+	* Renamed MNOTE_NIKON_TAG_PREVIEWIMAGE_IFD_POINTERS to show that it's 
+	  an IFD. The case of IFDs in MakerNotes needs to be handled better
+	  because right now, those MakerNote IFD tags are corrupted since
+	  the sub-IFDs aren't being read and written.
+
+2009-01-22  Dan Fandrich <dan@coneharvesters.com>
+
+	* Fix exif_tag_get_support_level_in_ifd() to handle the case where two
+	  tags with the same number exist in different IFDs.
+	* Added test-tagtable to do some tests on the static EXIF tag
+	  information table.
+
+2009-01-21  Dan Fandrich <dan@coneharvesters.com>
+
+	* libexif/exif-entry.c: Initialize the default for EXIF_TAG_COLOR_SPACE
+	  to "Uncalibrated"
+	* libexif/exif-data.c: Reduce the recursion limit
+	* When the data type is not known in exif_tag_get_support_level_in_ifd
+	  check the support level for all data types and if it's all the same,
+	  return that. This means that fixing a new EXIF tag block will
+	  actually create some tags in it now.
+
+2009-01-15  Dan Fandrich <dan@coneharvesters.com>
+
+	* Interpret more Sanyo MakerNote tags
+
+2009-01-12  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added support for Epson MakerNotes, which have the identical
+	  tag format and namespace of the Olympus ones.
+
+2009-01-06  Dan Fandrich <dan@coneharvesters.com>
+
+	* libexif/exif-tags.c: Added remaining GPS tags from the EXIF 2.2
+	  spec to the tag table.
+
+2009-01-03  Dan Fandrich <dan@coneharvesters.com>
+
+	* contrib/examples/photographer.c: Added example program to show how
+	  to display EXIF and MakerNote tags
+
+2008-12-22  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/vi.po: Updated Vietnamese translation by Clytie Siddall
+        * Fixed bug #1946138 to stop ignoring CFLAGS in the sqrt configure test
+
+2008-11-25  Dan Fandrich <dan@coneharvesters.com>
+
+	* po/sk.po: Updated Slovak translation by Ivan Masár
+
+2008-11-22  Dan Fandrich <dan@coneharvesters.com>
+
+	* Added Doxygen comments for the main API entry points and data
+	  structures
+
+2008-11-18  Dan Fandrich <dan@coneharvesters.com>
+
+	* libexif/exif-entry.c & configure.ac: use localtime_r when available
+	  to make libexif thread safe
+	* po/nl.po: Updated Dutch translation by Erwin Poeze
+	* po/pl.po: Updated Polish translation by Jakub Bogusz
+	* contrib/examples/*: Added a couple of simple example programs
+	  to show how to use libexif. One was written by Naysawn Naderi
+	  and the other one I wrote. Closes bug #1246824.
+
 2008-11-06  Dan Fandrich <dan@coneharvesters.com>
 
 	* Released 0.6.17

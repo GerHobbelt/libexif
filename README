@@ -13,9 +13,9 @@ FEATURES
 --------
 
 libexif supports parsing, editing and saving of EXIF data. In addition, it
-has gettext support. All EXIF tags described in EXIF standard 2.1
-are supported.  Many maker notes from Canon, Casio, Fuji, Nikon, Olympus,
-Pentax and Sanyo cameras are also supported.
+has gettext support. All EXIF tags described in EXIF standard 2.1 (and most
+from 2.2) are supported.  Many maker notes from Canon, Casio, Epson,
+Fuji, Nikon, Olympus, Pentax and Sanyo cameras are also supported.
 
 
 REQUIREMENTS
@@ -44,7 +44,8 @@ to the header files.
 
 The short test-program test/test-mem illustrates how to create valid
 EXIF data from scratch, how to save EXIF data and how to load EXIF data 
-from data in memory. Don't hesitate to contact us 
+from data in memory. There are also a few simple example programs available
+in the contrib/examples/ directory.  Don't hesitate to contact us 
 (<libexif-devel@lists.sourceforge.net>) if you've got any questions
 on how to use libexif.
 
@@ -76,6 +77,8 @@ LIBRARIES
 ---------
 
 I know of the following libraries that use or have been inspired by libexif:
+ - libexif-gtk: library of widgets to help display EXIF tags in GTK
+   programs (part of the libexif project)
  - pel: PHP-Code (http://pel.sourceforge.net)
 
 
@@ -102,6 +105,12 @@ necessary:
   ./configure
   make
 
+Or, possibly just:
+
+  autoreconf -i
+  ./configure
+  make
+
 Besides the standard arguments, configure takes several specific to libexif:
 
   --disable-docs          To disable producing any documentation
@@ -111,11 +120,13 @@ Besides the standard arguments, configure takes several specific to libexif:
 Certain specialized applications can reduce the size of the libexif
 binary by setting one or both of the following macros in the CPPFLAGS
 environment variable at configure time.  Each one removes certain kinds of
-text strings from the binary.  Applications which need to access specific,
-known EXIF tags and know in advance the meaning of their data have no need
-of those strings and can save considerable space by eliminating them.
+text strings and constants from the binary.  Applications which need
+to access specific, known EXIF tags and know in advance the meaning of
+their data have no need of those strings and can save considerable space
+by eliminating them.
 
- -DNO_VERBOSE_TAG_STRINGS Names and descriptions of EXIF tags, & debug messages
+ -DNO_VERBOSE_TAG_STRINGS Names and descriptions of EXIF tags, debug messages,
+                          mandatory EXIF fields (disabling auto-tag-fixup)
  -DNO_VERBOSE_TAG_DATA    Names of enumerated tag data contents
 
 

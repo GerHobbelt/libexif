@@ -171,6 +171,9 @@ exif_data_load_data_entry (ExifData *data, ExifEntry *entry,
 	entry->format     = exif_get_short (d + offset + 2, data->priv->order);
 	entry->components = exif_get_long  (d + offset + 4, data->priv->order);
 
+	/* FIXME: should use exif_tag_get_name_in_ifd here but entry->parent 
+	 * has not been set yet
+	 */
 	exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
 		  "Loading entry 0x%x ('%s')...", entry->tag,
 		  exif_tag_get_name (entry->tag));
@@ -178,11 +181,10 @@ exif_data_load_data_entry (ExifData *data, ExifEntry *entry,
 	/* {0,1,2,4,8} x { 0x00000000 .. 0xffffffff } 
 	 *   -> { 0x000000000 .. 0x7fffffff8 } */
 	s = exif_format_get_size(entry->format) * entry->components;
-	if (s < entry->components) {
+	if ((s < entry->components) || (s == 0)){
 		return 0;
 	}
-	if (0 == s)
-		return 0;
+
 	/*
 	 * Size? If bigger than 4 bytes, the actual data is not
 	 * in the entry but somewhere else (offset).
@@ -193,10 +195,11 @@ exif_data_load_data_entry (ExifData *data, ExifEntry *entry,
 		doff = offset + 8;
 
 	/* Sanity checks */
-	if ((doff + s < doff) || (doff + s < s))
+	if ((doff + s < doff) || (doff + s < s) || (doff + s > size)) {
+		exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
+				  "Tag data past end of buffer (%u > %u)", doff+s, size);	
 		return 0;
-	if (size < doff + s)
-		return 0;
+	}
 
 	entry->data = exif_data_alloc (data, s);
 	if (entry->data) {
@@ -210,9 +213,8 @@ exif_data_load_data_entry (ExifData *data, ExifEntry *entry,
 	/* If this is the MakerNote, remember the offset */
 	if (entry->tag == EXIF_TAG_MAKER_NOTE) {
 		if (!entry->data) {
-			exif_log (data->priv->log,
-                                               EXIF_LOG_CODE_DEBUG, "ExifData",
-                                               "MakerNote found with NULL data");	
+			exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
+					  "MakerNote found with empty data");	
 		} else if (entry->size > 6) {
 			exif_log (data->priv->log,
 					       EXIF_LOG_CODE_DEBUG, "ExifData",
@@ -306,21 +308,25 @@ exif_data_save_data_entry (ExifData *data, ExifEntry *e,
 
 static void
 exif_data_load_data_thumbnail (ExifData *data, const unsigned char *d,
-			       unsigned int ds, ExifLong offset, ExifLong size)
+			       unsigned int ds, ExifLong o, ExifLong s)
 {
-	if ((ds < offset + size) || (offset > ds)) {
+	/* Sanity checks */
+	if ((o + s < o) || (o + s < s) || (o + s > ds) || (o > ds)) {
 		exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
 			  "Bogus thumbnail offset (%u) or size (%u).",
-			  offset, size);
+			  o, s);
 		return;
 	}
+
 	if (data->data) 
 		exif_mem_free (data->priv->mem, data->data);
-	data->size = size;
-	data->data = exif_data_alloc (data, data->size);
-	if (!data->data) 
+	if (!(data->data = exif_data_alloc (data, s))) {
+		EXIF_LOG_NO_MEMORY (data->priv->log, "ExifData", s);
+		data->size = 0;
 		return;
-	memcpy (data->data, d + offset, data->size);
+	}
+	data->size = s;
+	memcpy (data->data, d + o, s);
 }
 
 #undef CHECK_REC
@@ -341,6 +347,16 @@ if (data->ifd[(i)]->count) {				\
 	break;						\
 }
 
+/*! Load data for an IFD.
+ *
+ * \param[in,out] data #ExifData
+ * \param[in] ifd IFD to load
+ * \param[in] d pointer to buffer containing raw IFD data
+ * \param[in] ds size of raw data in buffer at \c d
+ * \param[in] offset offset into buffer at \c d at which IFD starts
+ * \param[in] recursion_depth number of times this function has been
+ * recursively called without returning
+ */
 static void
 exif_data_load_data_content (ExifData *data, ExifIfd ifd,
 			     const unsigned char *d,
@@ -356,26 +372,32 @@ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
 		return;
 
 	/* check for valid ExifIfd enum range */
-	if (( ((int)ifd) < 0) || ( ((int)ifd) >= EXIF_IFD_COUNT))
+	if ((((int)ifd) < 0) || ( ((int)ifd) >= EXIF_IFD_COUNT))
 	  return;
 
-	if (recursion_depth > 150) {
+	if (recursion_depth > 30) {
 		exif_log (data->priv->log, EXIF_LOG_CODE_CORRUPT_DATA, "ExifData",
 			  "Deep recursion detected!");
 		return;
 	}
 
 	/* Read the number of entries */
-	if (offset >= ds - 1) 
+	if ((offset + 2 < offset) || (offset + 2 < 2) || (offset + 2 > ds)) {
+		exif_log (data->priv->log, EXIF_LOG_CODE_CORRUPT_DATA, "ExifData",
+			  "Tag data past end of buffer (%u > %u)", offset+2, ds);
 		return;
+	}
 	n = exif_get_short (d + offset, data->priv->order);
 	exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
-	          "Loading %i entries...", n);
+	          "Loading %hu entries...", n);
 	offset += 2;
 
 	/* Check if we have enough data. */
-	if (offset + 12 * n > ds) 
+	if (offset + 12 * n > ds) {
 		n = (ds - offset) / 12;
+		exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
+				  "Short data; only loading %hu entries...", n);
+	}
 
 	for (i = 0; i < n; i++) {
 
@@ -388,6 +410,11 @@ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
 		case EXIF_TAG_JPEG_INTERCHANGE_FORMAT:
 			o = exif_get_long (d + offset + 12 * i + 8,
 					   data->priv->order);
+			/* FIXME: IFD_POINTER tags aren't marked as being in a
+			 * specific IFD, so exif_tag_get_name_in_ifd won't work
+			 */
+			exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
+				  "IFD entry 0x%x at %u.", tag, o);
 			switch (tag) {
 			case EXIF_TAG_EXIF_IFD_POINTER:
 				CHECK_REC (EXIF_IFD_EXIF);
@@ -429,17 +456,17 @@ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
 			if (!exif_tag_get_name_in_ifd (tag, ifd)) {
 
 				/*
-				 * Special case: Tag and format 0. That's against specification.
-				 * At least up to 2.2. But Photoshop writes it anyways.
+				 * Special case: Tag and format 0. That's against specification
+				 * (at least up to 2.2). But Photoshop writes it anyways.
 				 */
 				if (!memcmp (d + offset + 12 * i, "\0\0\0\0", 4)) {
 					exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
-						  "Skipping empty entry at position %i in '%s'.", i, 
+						  "Skipping empty entry at position %u in '%s'.", i, 
 						  exif_ifd_get_name (ifd));
 					break;
 				}
 				exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
-					  "Unknown tag 0x%04x (entry %i in '%s'). Please report this tag "
+					  "Unknown tag 0x%04x (entry %u in '%s'). Please report this tag "
 					  "to <libexif-devel@lists.sourceforge.net>.", tag, i,
 					  exif_ifd_get_name (ifd));
 				if (data->priv->options & EXIF_DATA_OPTION_IGNORE_UNKNOWN_TAGS)
@@ -495,7 +522,7 @@ exif_data_save_data_content (ExifData *data, ExifContent *ifd,
 		if (ifd == data->ifd[i])
 			break;
 	if (i == EXIF_IFD_COUNT)
-		return;
+		return;	/* error */
 
 	/*
 	 * Check if we need some extra entries for pointers or the thumbnail.
@@ -717,6 +744,7 @@ exif_data_get_type_maker_note (ExifData *d)
 	if ((e->size >= 8) && ( !memcmp (e->data, "OLYMP", 6) ||
 				!memcmp (e->data, "OLYMPUS", 8) ||
 				!memcmp (e->data, "SANYO", 6) ||
+				!memcmp (e->data, "EPSON", 6) ||
 				!memcmp (e->data, "Nikon", 6)))
 		return EXIF_DATA_TYPE_MAKER_NOTE_OLYMPUS;
 
@@ -1265,5 +1293,5 @@ exif_data_set_data_type (ExifData *d, ExifDataType dt)
 ExifDataType
 exif_data_get_data_type (ExifData *d)
 {
-	return (d && d->priv) ? d->priv->data_type : EXIF_DATA_TYPE_COUNT;
+	return (d && d->priv) ? d->priv->data_type : EXIF_DATA_TYPE_UNKNOWN;
 }
