@@ -16,8 +16,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301  USA.
  */
 
 #ifndef __EXIF_LOADER_H__
@@ -90,12 +90,19 @@ void          exif_loader_reset (ExifLoader *loader);
  * already contain data from a previous call to #exif_loader_write_file
  * or #exif_loader_write.
  *
+ * \note The #ExifData returned is created using its default options, which
+ * may take effect before the data is returned. If other options are desired,
+ * an #ExifData must be created explicitly and data extracted from the loader
+ * using #exif_loader_get_buf instead.
+ *
  * \param[in] loader the loader
  * \return allocated ExifData
+ *
+ * \see exif_loader_get_buf
  */
 ExifData     *exif_loader_get_data (ExifLoader *loader);
 
-/*! Return the data read by the loader.  The returned pointer is only
+/*! Return the raw data read by the loader.  The returned pointer is only
  * guaranteed to be valid until the next call to a function modifying
  * this #ExifLoader.  Either or both of buf and buf_size may be NULL on
  * entry, in which case that value is not returned.

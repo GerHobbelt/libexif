@@ -14,8 +14,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301  USA.
  */
 
 #include <config.h>
@@ -414,7 +414,8 @@ exif_data_load_data_content (ExifData *data, ExifIfd ifd,
 			 * specific IFD, so exif_tag_get_name_in_ifd won't work
 			 */
 			exif_log (data->priv->log, EXIF_LOG_CODE_DEBUG, "ExifData",
-				  "IFD entry 0x%x at %u.", tag, o);
+				  "Sub-IFD entry 0x%x ('%s') at %u.", tag,
+				  exif_tag_get_name(tag), o);
 			switch (tag) {
 			case EXIF_TAG_EXIF_IFD_POINTER:
 				CHECK_REC (EXIF_IFD_EXIF);

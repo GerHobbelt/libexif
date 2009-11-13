@@ -16,8 +16,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301  USA.
  */
 
 #ifndef __EXIF_TAG_H__
@@ -60,8 +60,8 @@ typedef enum {
 	EXIF_TAG_ARTIST				= 0x013b,
 	EXIF_TAG_WHITE_POINT			= 0x013e,
 	EXIF_TAG_PRIMARY_CHROMATICITIES		= 0x013f,
-	EXIF_TAG_TRANSFER_RANGE			= 0x0156,
 	EXIF_TAG_SUB_IFDS			= 0x014a,
+	EXIF_TAG_TRANSFER_RANGE			= 0x0156,
 	EXIF_TAG_JPEG_PROC			= 0x0200,
 	EXIF_TAG_JPEG_INTERCHANGE_FORMAT	= 0x0201,
 	EXIF_TAG_JPEG_INTERCHANGE_FORMAT_LENGTH	= 0x0202,
