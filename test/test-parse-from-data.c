@@ -21,13 +21,20 @@
  * SPDX-License-Identifier: LGPL-2.0-or-later
  */
 
+#include "config.h"
+
 #include "libexif/exif-data.h"
 #include "libexif/exif-system.h"
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
 #include <fcntl.h>
 #include <sys/stat.h>
 

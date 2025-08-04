@@ -7,6 +7,10 @@
 #include "i18n.h"
 #include <locale.h>
 
+#ifndef LC_MESSAGES
+#define LC_MESSAGES   LC_ALL
+#endif
+
 #include <stdio.h>
 #include <string.h>
 

@@ -2,13 +2,20 @@
  * SPDX-License-Identifier: LGPL-2.0-or-later
  */
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <i18n.h>
+#include <locale.h>
+#ifdef HAVE_LANGINFO_H
 #include <langinfo.h>
+#endif
+#ifdef HAVE_LIBINTL_H
 #include <libintl.h>
+#endif
 
 /* return whether byte strings are equal or not.
  * NULL strings are never equal
@@ -96,7 +103,7 @@ static int check(const int i)
 	if (NULL != oldcodeset) {
 		printf(
 		       "Old codeset:     \"%s\" (locale default)\n",
-		       nl_langinfo(CODESET)
+		       nl_langinfo(MY_CODESET)
 		       );
 	} else {
 		printf(
@@ -134,7 +141,7 @@ static int check(const int i)
 }
 
 
-static int checks()
+static int checks(void)
 {
 	int i;
 		
