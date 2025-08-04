@@ -32,9 +32,14 @@ static testcase testcases[] = {
     N_("[DO_NOT_TRANSLATE_THIS_MARKER]") },
 };
 
-int main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_nls_test_main
+#endif
+
+int main(int argc, const char** argv)
 {
-  char *localedir;
+  const char *localedir;
   int i;
 
   if (argc != 2) {

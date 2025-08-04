@@ -155,7 +155,12 @@ static void split_ws_string(const char *string, test_parse_func func, void *call
 
 
 /** Main program. */
-int main(const int argc, const char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_parse_test_main
+#endif
+
+int main(int argc, const char** argv)
 {
   int i;
   void *callback_data = NULL;

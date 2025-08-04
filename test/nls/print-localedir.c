@@ -7,6 +7,10 @@
 
 #include <stdio.h>
 
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_print_localedir_test_main
+#endif
+
 int main(void)
 {
   puts(LOCALEDIR);

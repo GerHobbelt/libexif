@@ -210,6 +210,11 @@ static int name(void)
     return fail;
 }
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_tagtable_test_main
+#endif
+
 int
 main (void)
 {

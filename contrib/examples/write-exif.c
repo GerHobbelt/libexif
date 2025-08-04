@@ -194,6 +194,11 @@ static ExifEntry *create_tag(ExifData *exif, ExifIfd ifd, ExifTag tag, size_t le
 	return entry;
 }
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_write_exif_test_example_main
+#endif
+
 int main (void)
 {
 	int rc = 1;

@@ -186,7 +186,12 @@ static int checks(void)
 }
 
 
-int main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_nls_codeset_test_main
+#endif
+
+int main(int argc, const char** argv)
 {
 	if (argc > 1) {
 		if ((argc == 2) && (strcmp("--list", argv[1]) == 0)) {

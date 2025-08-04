@@ -30,7 +30,12 @@
 
 static const unsigned char header[4] = {'\xff', '\xd8', '\xff', '\xe1'};
 
-int main(const int argc, const char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_extract_test_main
+#endif
+
+int main(int argc, const char** argv)
 {
   int first = 1;
   const char *fn = "input.jpg";

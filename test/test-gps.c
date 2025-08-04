@@ -112,6 +112,11 @@ static int check_entry_format(ExifEntry *e)
 	return 0;
 }
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_gps_test_main
+#endif
+
 int
 main (void)
 {

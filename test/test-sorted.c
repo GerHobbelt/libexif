@@ -28,6 +28,11 @@
 #include <stdio.h>
 #include <string.h>
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_sorted_test_main
+#endif
+
 int
 main (void)
 {

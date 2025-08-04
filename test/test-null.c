@@ -338,6 +338,11 @@ static void log_null_test(void)
 	exif_log_unref(l);
 }
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_null_test_main
+#endif
+
 int main(void)
 {
 	loader_null_test();

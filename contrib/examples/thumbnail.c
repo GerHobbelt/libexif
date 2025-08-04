@@ -9,7 +9,12 @@
 #include <stdio.h>
 #include <libexif/exif-loader.h>
 
-int main(int argc, char **argv)
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_thumbnail_example_main
+#endif
+
+int main(int argc, const char** argv)
 {
     int rc = 1;
     ExifLoader *l;

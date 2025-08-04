@@ -66,7 +66,12 @@ static void show_mnote_tag(ExifData *d, unsigned tag)
     }
 }
 
-int main(int argc, char **argv)
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_photographer_example_main
+#endif
+
+int main(int argc, const char **argv)
 {
     ExifData *ed;
     ExifEntry *entry;

@@ -116,6 +116,11 @@ static void check_entry_trunc(ExifEntry *e, int uniform)
 	}
 }
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_value_test_main
+#endif
+
 int
 main (void)
 {

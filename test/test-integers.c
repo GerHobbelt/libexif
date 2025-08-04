@@ -34,6 +34,11 @@ typedef enum {
    EN_F
 } enum_t;
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_integers_test_main
+#endif
+
 int main(void)
 {
   /* libexif assumes unsigned ints are not smaller than 32bit in many places */

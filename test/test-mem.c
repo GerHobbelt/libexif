@@ -29,6 +29,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#if defined(BUILD_MONOLITHIC)
+#define main  exif_mem_test_main
+#endif
+
 int
 main (void)
 {
