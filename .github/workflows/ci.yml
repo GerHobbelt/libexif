@@ -83,6 +83,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.0
+        with:
+          persist-credentials: false
 
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         if: matrix.failmalloc == true
@@ -108,7 +110,7 @@ jobs:
           @@ -25,6 +25,11 @@
            #include <time.h>
            #include <errno.h>
-           
+
           +/* No longer found in glibc headers */
           +extern void *(*__malloc_hook) (size_t, const void *);
           +extern void *(*__realloc_hook) (void *ptr, size_t size, const void *);
@@ -116,17 +118,17 @@ jobs:
           +
            static void failmalloc_install (void);
            static void failmalloc_uninstall (void);
-           
+
           @@ -202,7 +207,8 @@
              srand (getpid () * 32452843 + time (NULL) * 49979687);
-           
+
              failmalloc_install ();
           +  atexit(failmalloc_uninstall);
            }
-           
+
           -void (*__malloc_initialize_hook) (void) = failmalloc_init;
           +void (*volatile __malloc_initialize_hook) (void) = failmalloc_init;
-           
+
           EOF
           ./configure --prefix="$HOME/failmalloc" --disable-dependency-tracking
           make
@@ -167,6 +169,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.0
+        with:
+          persist-credentials: false
       - name: 'install prereqs'
         run: sudo apt-get update && sudo apt-get install -y --no-install-suggests --no-install-recommends ${{ matrix.packages }}
       - name: 'install libexif-testsuite'
@@ -210,6 +214,8 @@ jobs:
         cflags: [-Wall -Wextra -O2]
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - name: start VM
         uses: cross-platform-actions/action@v1
         with:
