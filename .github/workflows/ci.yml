@@ -33,14 +33,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, ubuntu-22.04]
+        os: [ubuntu-26.04, ubuntu-24.04, ubuntu-22.04]
         cc: [gcc, clang]
         packages: [build-essential clang autoconf automake autopoint libtool gettext]
         cflags: [-Wall -Wextra -O2]
         include:
           # This uses ASAN and UBSAN, enables more warnings, plus errors out on any warnings
           - name: sanitize
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             packages: clang build-essential autoconf automake autopoint libtool gettext
             cc: clang
             # TODO: fix the code to eliminate the -Wno-... disables
@@ -48,20 +48,20 @@ jobs:
             ldflags: -fsanitize=address -fsanitize=undefined -fsanitize-address-use-after-scope -fsanitize-undefined-trap-on-error -g
             mflags: AM_CFLAGS=-Werror
           - name: powerpc cross-compile
-            os: ubuntu-24.04
-            packages: gcc-14-powerpc-linux-gnu libc6-dev-powerpc-cross build-essential autoconf automake autopoint libtool gettext
-            cc: powerpc-linux-gnu-gcc-14
+            os: ubuntu-26.04
+            packages: gcc-16-powerpc-linux-gnu libc6-dev-powerpc-cross build-essential autoconf automake autopoint libtool gettext
+            cc: powerpc-linux-gnu-gcc-16
             cflags: -g -Wall -Wextra
             ldflags: -static
             configure: --host=powerpc-linux-gnu
             skiptests: true
           - name: C90
-            os: ubuntu-24.04
+            os: ubuntu-22.04
             packages: build-essential autoconf automake autopoint libtool gettext
             cc: gcc
             cflags: -Wall -Wextra -O2 -std=iso9899:1990 -D_XOPEN_SOURCE=500
           - name: disable-nls
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             packages: build-essential autoconf automake autopoint libtool gettext
             cc: gcc
             cflags: -Wall -Wextra -O2
@@ -76,13 +76,13 @@ jobs:
             configure: --with-failmalloc="$HOME/failmalloc/lib"
             failmalloc: true
           - name: valgrind
-            os: ubuntu-24.04
+            os: ubuntu-26.04
             packages: build-essential autoconf automake autopoint libtool gettext valgrind
             cc: gcc
             cflags: -Wall -Wextra -O1 -g
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.0
 
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v4
         if: matrix.failmalloc == true
@@ -166,7 +166,7 @@ jobs:
             ldflags: -g -O0 --coverage
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.0
       - name: 'install prereqs'
         run: sudo apt-get update && sudo apt-get install -y --no-install-suggests --no-install-recommends ${{ matrix.packages }}
       - name: 'install libexif-testsuite'
@@ -209,7 +209,7 @@ jobs:
         arch: ['x86_64', 'aarch64']
         cflags: [-Wall -Wextra -O2]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7.0.1
       - name: start VM
         uses: cross-platform-actions/action@v1
         with:
